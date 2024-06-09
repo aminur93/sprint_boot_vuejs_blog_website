@@ -1,4 +1,4 @@
-package aminurdev.com.backend.controllers.rest;
+package aminurdev.com.backend.controllers.rest.admin;
 
 import aminurdev.com.backend.domain.entity.Permission;
 import aminurdev.com.backend.response.ResponseWrapper;

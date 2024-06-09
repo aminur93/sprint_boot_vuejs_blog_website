@@ -22,6 +22,15 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 public class User implements UserDetails {
 
+    public User(Integer id, String name, String email, LocalDateTime createdAt, LocalDateTime updatedAt)
+    {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -71,10 +80,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .flatMap(role -> role.getPermissions().stream())
-                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-                .collect(Collectors.toList());
+//        return roles.stream()
+//                .flatMap(role -> role.getPermissions().stream())
+//                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override

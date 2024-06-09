@@ -57,10 +57,10 @@ public class PermissionImpl implements PermissionService {
         links.setFirst("/permission?page=1");
         links.setLast("/permission?page=" + permissionPage.getTotalPages());
         if (permissionPage.hasPrevious()) {
-            links.setPrev("/tags?page=" + permissionPage.previousPageable().getPageNumber());
+            links.setPrev("/permission?page=" + permissionPage.previousPageable().getPageNumber());
         }
         if (permissionPage.hasNext()) {
-            links.setNext("/tags?page=" + permissionPage.nextPageable().getPageNumber());
+            links.setNext("/permission?page=" + permissionPage.nextPageable().getPageNumber());
         }
 
         response.setLinks(links);

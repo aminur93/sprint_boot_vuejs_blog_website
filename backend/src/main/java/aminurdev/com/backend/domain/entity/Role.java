@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -49,5 +50,12 @@ public class Role {
     protected void onUpdate()
     {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void addPermissions(List<Permission> permissions) {
+        if (this.permissions == null) {
+            this.permissions = new ArrayList<>();
+        }
+        this.permissions.addAll(permissions);
     }
 }

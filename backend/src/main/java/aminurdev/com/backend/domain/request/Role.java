@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor(staticName = "build")
 @NoArgsConstructor
@@ -16,4 +18,6 @@ public class Role {
     @NotBlank(message = "Name must not be blank")
     @NotNull(message = "Name field is required")
     private String name;
+
+    private List<Integer> permissions;
 }
