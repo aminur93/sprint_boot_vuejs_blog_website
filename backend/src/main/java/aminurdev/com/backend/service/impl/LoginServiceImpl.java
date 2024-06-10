@@ -61,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
 
                 responseData.setName(user.getName());
                 responseData.setEmail(user.getEmail());
-                //responseData.setRole(user.getRole());
+                responseData.setRoles(user.getRoles());
                 responseData.setCreatedAt( user.getCreatedAt());
                 responseData.setUpdatedAt(user.getUpdatedAt());
 

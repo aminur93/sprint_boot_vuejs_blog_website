@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,13 +58,13 @@ public class User implements UserDetails {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = true)
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
             name = "model_has_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private Role roles;
 
     @PrePersist
     protected void onCreate()
@@ -80,8 +81,11 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return roles.stream()
-//                .flatMap(role -> role.getPermissions().stream())
+//        if (roles == null || roles.getPermissions() == null) {
+//            return Collections.emptyList();
+//        }
+//
+//        return roles.getPermissions().stream()
 //                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
 //                .collect(Collectors.toList());
         return null;

@@ -1,9 +1,12 @@
 package aminurdev.com.backend.domain.request;
 
+import aminurdev.com.backend.domain.entity.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor(staticName = "build")
@@ -29,4 +32,7 @@ public class User {
             message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)"
     )
     private String password;
+
+    @NotNull(message = "Role cannot be null")
+    private Integer role;
 }
