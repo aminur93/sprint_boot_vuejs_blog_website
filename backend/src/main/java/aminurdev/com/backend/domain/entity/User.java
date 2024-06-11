@@ -81,14 +81,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        if (roles == null || roles.getPermissions() == null) {
-//            return Collections.emptyList();
-//        }
-//
-//        return roles.getPermissions().stream()
-//                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
-//                .collect(Collectors.toList());
-        return null;
+        return roles.getAuthorities();
     }
 
     @Override

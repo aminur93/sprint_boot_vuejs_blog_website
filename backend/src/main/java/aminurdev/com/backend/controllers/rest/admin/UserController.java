@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('user-list')")
     public ResponseEntity<PaginationResponse<User>> index(
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestParam(defaultValue = "1") int page,
@@ -53,6 +55,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('user-create')")
     public ResponseEntity<ResponseWrapper> store(@Valid @RequestBody aminurdev.com.backend.domain.request.User userRequest) {
 
         try{
@@ -79,6 +82,7 @@ public class UserController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('user-edit')")
     public ResponseEntity<ResponseWrapper> edit(@PathVariable("id") Integer userId) {
         try{
 
@@ -118,6 +122,7 @@ public class UserController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('user-update')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer userId, @Valid @RequestBody aminurdev.com.backend.domain.request.User userRequest) {
         try{
             User user = userService.update(userId, userRequest);
@@ -156,6 +161,7 @@ public class UserController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('user-delete')")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable("id") Integer userId) {
         try{
 

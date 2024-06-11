@@ -5,10 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -25,7 +28,7 @@ public class Role {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_has_permission",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -57,5 +60,15 @@ public class Role {
             this.permissions = new ArrayList<>();
         }
         this.permissions.addAll(permissions);
+    }
+
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        var authorities = getPermissions()
+                .stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                .collect(Collectors.toList());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.getName()));
+
+        return authorities;
     }
 }

@@ -1,11 +1,11 @@
 package aminurdev.com.backend.controllers.rest.admin;
 
-import aminurdev.com.backend.domain.entity.Permission;
+import aminurdev.com.backend.domain.entity.SubCategory;
 import aminurdev.com.backend.response.ResponseWrapper;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
-import aminurdev.com.backend.service.PermissionService;
+import aminurdev.com.backend.service.SubCategoryService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,65 +17,63 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
-@RequestMapping("/api/v1/admin/permission")
-public class PermissionController {
+@RequestMapping("/api/v1/admin/sub-category")
+@RequiredArgsConstructor
+public class SubCategoryController {
 
-    private final PermissionService permissionService;
+    private final SubCategoryService subCategoryService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('permission-list')")
-    public ResponseEntity<PaginationResponse<Permission>> index(
+    @PreAuthorize("hasAuthority('subCategory-list')")
+    public ResponseEntity<PaginationResponse<SubCategory>> index(
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int perPage
-    )
-    {
+    ){
         Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
 
-        PaginationResponse<Permission> paginationResponse = permissionService.index(direction, page, perPage);
+        PaginationResponse<SubCategory> paginationResponse = subCategoryService.index(direction, page, perPage);
 
         return ResponseEntity.ok(paginationResponse);
     }
 
-    @GetMapping("/all-permission")
-    public ResponseEntity<ResponseWrapper> allPermission()
+    @GetMapping("/all-subCategory")
+    public ResponseEntity<ResponseWrapper> getAllSubCategories()
     {
-        List<Permission> permissions = permissionService.getAllPermission();
+        List<SubCategory> subCategories = subCategoryService.getAllSubCategories();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(permissions),
-                "All Permission fetch successful",
+                Collections.singletonList(subCategories),
+                "SubCategory fetch successful",
                 "true",
                 HttpStatus.OK.value()
         );
 
         return ResponseEntity.ok(responseWrapper);
-
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('permission-create')")
-    public ResponseEntity<ResponseWrapper> store(@Valid @RequestBody aminurdev.com.backend.domain.request.Permission permissionRequest)
+    @PreAuthorize("hasAuthority('subCategory-create')")
+    public ResponseEntity<ResponseWrapper> store(@Valid @RequestBody aminurdev.com.backend.domain.request.SubCategory subCategoryRequest)
     {
         try{
 
-            Permission permission = permissionService.store(permissionRequest);
+            SubCategory subCategory = subCategoryService.store(subCategoryRequest);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(permission),
-                    "store successful",
+                    Collections.singletonList(subCategory),
+                    "SubCategory store successful",
                     "true",
                     HttpStatus.CREATED.value()
             );
 
-            return ResponseEntity.ok(responseWrapper);
+            return ResponseEntity.status(HttpStatus.CREATED.value()).body(responseWrapper);
 
-        }catch (Exception e){
+        }catch (Exception exception){
 
             ResponseWrapper responseWrapper = new ResponseWrapper().error(
-                    Collections.singletonList(e.getMessage()),
-                    "failed",
+                    Collections.singletonList(exception.getMessage()),
+                    "Failed",
                     "false",
                     HttpStatus.INTERNAL_SERVER_ERROR.value()
             );
@@ -85,16 +83,52 @@ public class PermissionController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAuthority('permission-edit')")
-    public ResponseEntity<ResponseWrapper> edit(@PathVariable("id") Integer permissionId)
+    @PreAuthorize("hasAuthority('subCategory-edit')")
+    public ResponseEntity<ResponseWrapper> edit(@PathVariable("id") Integer subCategoryId)
+    {
+        try {
+            SubCategory subCategory = subCategoryService.edit(subCategoryId);
+
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                    Collections.singletonList(subCategory),
+                    "SubCategory fetch successful",
+                    "true",
+                    HttpStatus.OK.value()
+            );
+
+            return ResponseEntity.ok(responseWrapper);
+        }catch (RequestRejectedException exception){
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                    Collections.singletonList(exception.getMessage()),
+                    "Record Not Found",
+                    "false",
+                    HttpStatus.NOT_FOUND.value()
+            );
+
+            return ResponseEntity.ok(responseWrapper);
+        }catch (Exception exception){
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                    Collections.singletonList(exception.getMessage()),
+                    "Failed",
+                    "false",
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()
+            );
+
+            return ResponseEntity.ok(responseWrapper);
+        }
+    }
+
+    @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('subCategory-update')")
+    public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer subCategoryId, @Valid @RequestBody aminurdev.com.backend.domain.request.SubCategory subCategoryRequest)
     {
         try{
 
-            Permission permission = permissionService.edit(permissionId);
+            SubCategory subCategory = subCategoryService.update(subCategoryId, subCategoryRequest);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(permission),
-                    "Permission fetch successful",
+                    Collections.singletonList(subCategory),
+                    "SubCategory update successful",
                     "true",
                     HttpStatus.OK.value()
             );
@@ -116,50 +150,9 @@ public class PermissionController {
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
                     Collections.singletonList(exception.getMessage()),
-                    "Failed, server error",
+                    "Failed",
                     "false",
-                    HttpStatus.NOT_FOUND.value()
-            );
-
-            return ResponseEntity.ok(responseWrapper);
-        }
-    }
-
-    @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('permission-update')")
-    public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer permissionId, @Valid @RequestBody aminurdev.com.backend.domain.request.Permission permissionRequest)
-    {
-        try{
-
-            Permission permission = permissionService.update(permissionRequest, permissionId);
-
-            ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(permission),
-                    "Permission update successful",
-                    "true",
-                    HttpStatus.OK.value()
-            );
-
-            return ResponseEntity.ok(responseWrapper);
-
-        }catch (RequestRejectedException exception){
-
-            ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(exception.getMessage()),
-                    "Record not found",
-                    "false",
-                    HttpStatus.NOT_FOUND.value()
-            );
-
-            return ResponseEntity.ok(responseWrapper);
-
-        }catch (Exception exception){
-
-            ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(exception.getMessage()),
-                    "Failed, server error",
-                    "false",
-                    HttpStatus.NOT_FOUND.value()
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()
             );
 
             return ResponseEntity.ok(responseWrapper);
@@ -167,16 +160,16 @@ public class PermissionController {
     }
 
     @DeleteMapping("{id}")
-    @PreAuthorize("hasAuthority('permission-delete')")
-    public ResponseEntity<ResponseWrapper> delete(@PathVariable("id") Integer permissionId)
+    @PreAuthorize("hasAuthority('subCategory-delete')")
+    public ResponseEntity<ResponseWrapper> delete(@PathVariable("id") Integer subCategoryId)
     {
         try{
 
-            permissionService.delete(permissionId);
+            subCategoryService.delete(subCategoryId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
                     Collections.singletonList(""),
-                    "Permission delete successful",
+                    "SubCategory delete successful",
                     "true",
                     HttpStatus.OK.value()
             );
@@ -187,7 +180,7 @@ public class PermissionController {
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
                     Collections.singletonList(exception.getMessage()),
-                    "Record not found",
+                    "Record Not Found",
                     "false",
                     HttpStatus.NOT_FOUND.value()
             );
@@ -198,9 +191,9 @@ public class PermissionController {
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
                     Collections.singletonList(exception.getMessage()),
-                    "Failed, server error",
+                    "Failed",
                     "false",
-                    HttpStatus.NOT_FOUND.value()
+                    HttpStatus.INTERNAL_SERVER_ERROR.value()
             );
 
             return ResponseEntity.ok(responseWrapper);
