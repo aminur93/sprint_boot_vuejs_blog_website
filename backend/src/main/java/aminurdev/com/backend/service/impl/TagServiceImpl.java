@@ -50,7 +50,7 @@ public class TagServiceImpl implements TagService {
         meta.setCurrentPage(tagPage.getNumber() + 1);
         meta.setFrom(tagPage.getNumber() * tagPage.getSize() + 1);
         meta.setLastPage(tagPage.getTotalPages());
-        meta.setPath("http://localhost:8080/api/v1/admin/" + "/tag");
+        meta.setPath("http://localhost:8080/api/v1/admin" + "/tag");
         meta.setPerPage(tagPage.getSize());
         meta.setTo((int) tagPage.getTotalElements());
         meta.setTotal((int) tagPage.getTotalElements());
@@ -58,13 +58,13 @@ public class TagServiceImpl implements TagService {
 
         Links links = new Links();
 
-        links.setFirst("http://localhost:8080/api/v1/admin/" + "/tag?page=1");
-        links.setLast("http://localhost:8080/api/v1/admin/" + "/tag?page=" + tagPage.getTotalPages());
+        links.setFirst("http://localhost:8080/api/v1/admin" + "/tag?page=1");
+        links.setLast("http://localhost:8080/api/v1/admin" + "/tag?page=" + tagPage.getTotalPages());
         if (tagPage.hasPrevious()) {
-            links.setPrev("http://localhost:8080/api/v1/admin/" + "/tag?page=" + tagPage.previousPageable().getPageNumber());
+            links.setPrev("http://localhost:8080/api/v1/admin" + "/tag?page=" + tagPage.previousPageable().getPageNumber());
         }
         if (tagPage.hasNext()) {
-            links.setNext("http://localhost:8080/api/v1/admin/" + "/tag?page=" + tagPage.nextPageable().getPageNumber());
+            links.setNext("http://localhost:8080/api/v1/admin" + "/tag?page=" + tagPage.nextPageable().getPageNumber());
         }
 
         response.setLinks(links);
