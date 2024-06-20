@@ -1,0 +1,24 @@
+-- Create menus table
+CREATE TABLE menus (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    permission_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    icon VARCHAR(255) NOT NULL,
+    route VARCHAR(255) NOT NULL,
+    header_menu TINYINT(4) DEFAULT 0,
+    sidebar_menu TINYINT(4) DEFAULT 0,
+    dropdown TINYINT(4) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create menuDropdown table
+CREATE TABLE menu_dropdowns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    menu_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    icon VARCHAR(255) NOT NULL,
+    route VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
