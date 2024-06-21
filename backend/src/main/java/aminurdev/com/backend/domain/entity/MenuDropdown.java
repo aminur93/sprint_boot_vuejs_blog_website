@@ -1,5 +1,6 @@
 package aminurdev.com.backend.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ public class MenuDropdown {
 
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = true)
+    @JsonBackReference
     private Menu menu;
 
     @ManyToOne

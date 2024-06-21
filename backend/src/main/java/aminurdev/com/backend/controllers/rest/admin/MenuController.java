@@ -44,7 +44,7 @@ public class MenuController {
         List<Menu> menus = menuService.getAllMenu();
 
         return ResponseEntity.ok(new ResponseWrapper().success(
-                Collections.singletonList(menus),
+                menus,
                 "Menu fetch successful",
                 "true",
                 HttpStatus.OK.value()

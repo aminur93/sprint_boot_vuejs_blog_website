@@ -1,12 +1,17 @@
 package aminurdev.com.backend.response;
 
-import aminurdev.com.backend.domain.entity.User;
+import aminurdev.com.backend.domain.entity.Menu;
+import aminurdev.com.backend.domain.entity.Permission;
+import aminurdev.com.backend.domain.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -23,4 +28,7 @@ public class AuthResponse {
     private String refreshToken;
     private String expiration;
     private aminurdev.com.backend.domain.entity.User User;
+    private Role role;
+    private List<Permission> permissions;
+    private List<Map<String, Object>> menus;
 }

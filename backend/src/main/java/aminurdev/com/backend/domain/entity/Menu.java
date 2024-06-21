@@ -1,6 +1,8 @@
 package aminurdev.com.backend.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -23,6 +26,7 @@ public class Menu {
 
     @ManyToOne
     @JoinColumn(name = "permission_id", nullable = true)
+    @JsonBackReference
     private Permission permission;
 
     @Column(name = "title", nullable = false)
@@ -61,4 +65,8 @@ public class Menu {
     {
         updatedAt = LocalDateTime.now();
     }
+
+    @OneToMany(mappedBy = "menu")
+    @JsonManagedReference
+    private List<MenuDropdown> menuDropdowns;
 }

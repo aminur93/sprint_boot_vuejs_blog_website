@@ -1,8 +1,6 @@
 package aminurdev.com.backend.service.impl;
 
-import aminurdev.com.backend.domain.entity.Category;
-import aminurdev.com.backend.domain.entity.Menu;
-import aminurdev.com.backend.domain.entity.Permission;
+import aminurdev.com.backend.domain.entity.*;
 import aminurdev.com.backend.domain.exception.CustomException;
 import aminurdev.com.backend.domain.exception.ResourceNotFoundException;
 import aminurdev.com.backend.domain.repository.MenuRepository;
@@ -19,7 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,11 +73,80 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Menu> getAllMenu() {
+        return menuRepository.findAll();
+    }
+
+
+    public List<Map<String, Object>> getMenusWithPermissionsAndDropdowns(List<Permission> permissions) {
 
         List<Menu> menus = menuRepository.findAll();
 
-        return menus;
+        List<Map<String, Object>> data = new ArrayList<>();
+
+        for (Menu menu : menus)
+        {
+            List<Map<String, Object>> menuDropDown = new ArrayList<>();
+
+            if (menu.getPermission() == null)
+            {
+                for (MenuDropdown md : menu.getMenuDropdowns())
+                {
+                    for (Permission permission : permissions)
+                    {
+                        if (permission.getId().equals(md.getPermission().getId()))
+                        {
+                            Map<String, Object> dropdownMap = new HashMap<>();
+
+                            dropdownMap.put("id", md.getId());
+                            dropdownMap.put("menu_id", md.getMenu().getId());
+                            dropdownMap.put("permission_id", permission.getName());
+                            dropdownMap.put("title", md.getTitle());
+                            dropdownMap.put("icon", md.getIcon());
+                            dropdownMap.put("route", md.getRoute());
+                            dropdownMap.put("created_at", md.getCreatedAt());
+                            dropdownMap.put("updated_at", md.getUpdatedAt());
+
+                            menuDropDown.add(dropdownMap);
+                        }
+                    }
+                }
+            }
+
+            boolean hasPermission = false;
+
+            for (Permission permission : permissions) {
+                if (menu.getPermission() == null) {
+                   hasPermission = true;
+                } else if (menu.getPermission().getId().equals(permission.getId())) {
+                    hasPermission = true;
+                }
+            }
+
+
+
+            if (hasPermission)
+            {
+                Map<String, Object> menuMap = new HashMap<>();
+
+                menuMap.put("id", menu.getId());
+                menuMap.put("permission_id", menu.getPermission() != null ? menu.getPermission().getName() : null);
+                menuMap.put("title", menu.getTitle());
+                menuMap.put("icon", menu.getIcon());
+                menuMap.put("route", menu.getRoute());
+                menuMap.put("header_menu", menu.isHeaderMenu());
+                menuMap.put("sidebar_menu", menu.isSidebarMenu());
+                menuMap.put("dropdown", menu.isDropdown());
+                menuMap.put("created_at", menu.getCreatedAt());
+                menuMap.put("updated_at", menu.getUpdatedAt());
+                menuMap.put("menu_dropdown", menuDropDown);
+
+                data.add(menuMap);
+            }
+        }
+
+        return data;
     }
+
 
     @Override
     public Menu store(aminurdev.com.backend.domain.request.Menu menuRequest) {

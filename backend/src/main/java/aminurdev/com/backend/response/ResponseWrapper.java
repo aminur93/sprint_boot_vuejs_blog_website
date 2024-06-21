@@ -13,7 +13,8 @@ import java.util.Map;
 public class ResponseWrapper {
 
     private List<Object> errors;
-    private List<Object> data;
+
+    private Object data;
 
     private String message;
 
@@ -21,7 +22,7 @@ public class ResponseWrapper {
 
     private Integer status;
 
-    public ResponseWrapper success(List<Object> data, String message, String success, Integer status) {
+    public ResponseWrapper success(Object data, String message, String success, Integer status) {
 
         this.data = data;
         this.errors = null;

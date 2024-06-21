@@ -1,22 +1,26 @@
 package aminurdev.com.backend.service.impl;
 
-import aminurdev.com.backend.domain.entity.Token;
-import aminurdev.com.backend.domain.entity.TokenType;
-import aminurdev.com.backend.domain.entity.User;
+import aminurdev.com.backend.domain.entity.*;
 import aminurdev.com.backend.domain.exception.CustomException;
 import aminurdev.com.backend.domain.exception.ResourceNotFoundException;
+import aminurdev.com.backend.domain.repository.MenuRepository;
 import aminurdev.com.backend.domain.repository.TokenRepository;
 import aminurdev.com.backend.domain.repository.UserRepository;
 import aminurdev.com.backend.response.AuthResponse;
 import aminurdev.com.backend.service.JwtService;
 import aminurdev.com.backend.service.LoginService;
+import aminurdev.com.backend.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,8 @@ public class LoginServiceImpl implements LoginService {
     private final JwtService jwtService;
 
     private final TokenRepository tokenRepository;
+
+    private final MenuService menuService;
 
 
     @Override
@@ -47,6 +53,13 @@ public class LoginServiceImpl implements LoginService {
 
             User user = userRepository.findByEmail(userRequest.getEmail()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+            // Assuming user.getRoles() returns a collection of roles (List<Role> or Set<Role>)
+            List<Permission> permissions = new ArrayList<>();
+
+            for (Role role :  Collections.singletonList(user.getRoles())) {
+                permissions.addAll(role.getPermissions());
+            }
+
             String jwtToken = jwtService.generateToken(user);
 
             revokedAllUserTokens(user);
@@ -57,15 +70,16 @@ public class LoginServiceImpl implements LoginService {
 
             if (user.getId() > 0)
             {
-                User responseData = new User();
+                response.setUser(user);
 
-                responseData.setName(user.getName());
-                responseData.setEmail(user.getEmail());
-                responseData.setRoles(user.getRoles());
-                responseData.setCreatedAt( user.getCreatedAt());
-                responseData.setUpdatedAt(user.getUpdatedAt());
+                response.setRole(user.getRoles());
 
-                response.setUser(responseData);
+                response.setPermissions(permissions);
+
+                // Assuming this is part of your controller method
+                response.setMenus(menuService.getMenusWithPermissionsAndDropdowns(permissions));
+
+
                 response.setMessage("Login successful");
                 response.setStatusCode(HttpStatus.OK.value());
                 response.setToken(jwtToken);
