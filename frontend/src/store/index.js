@@ -9,6 +9,7 @@ import * as actions from "./actions";
 //root vuex end
 
 //module start
+import category from "@/store/mosules/category";
 //module end
 
 const store = createStore({
@@ -18,7 +19,9 @@ const store = createStore({
     mutations,
     actions,
 
-    modules: {},
+    modules: {
+        category
+    },
 
     plugins: [
         createPersistedState({

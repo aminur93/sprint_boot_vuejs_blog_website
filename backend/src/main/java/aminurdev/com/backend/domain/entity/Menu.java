@@ -26,7 +26,6 @@ public class Menu {
 
     @ManyToOne
     @JoinColumn(name = "permission_id", nullable = true)
-    @JsonBackReference
     private Permission permission;
 
     @Column(name = "title", nullable = false)

@@ -1,6 +1,5 @@
 package aminurdev.com.backend.response;
 
-import aminurdev.com.backend.domain.entity.Menu;
 import aminurdev.com.backend.domain.entity.Permission;
 import aminurdev.com.backend.domain.entity.Role;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,7 +27,8 @@ public class AuthResponse {
     private String refreshToken;
     private String expiration;
     private aminurdev.com.backend.domain.entity.User User;
-    private Role role;
+    private Object role;
     private List<Permission> permissions;
     private List<Map<String, Object>> menus;
+
 }

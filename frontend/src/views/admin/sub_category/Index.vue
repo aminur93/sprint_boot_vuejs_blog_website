@@ -1,11 +1,11 @@
 <script>
 export default {
-  name: "AdminLayouts"
+  name: "SubCategoryIndex"
 }
 </script>
 
 <template>
-
+  <div id="index"></div>
 </template>
 
 <style scoped>

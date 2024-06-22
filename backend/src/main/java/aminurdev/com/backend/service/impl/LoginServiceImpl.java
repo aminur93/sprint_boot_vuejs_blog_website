@@ -16,10 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,7 +69,14 @@ public class LoginServiceImpl implements LoginService {
             {
                 response.setUser(user);
 
-                response.setRole(user.getRoles());
+                Map<String, Object> roleUpdate = new HashMap<>();
+
+                roleUpdate.put("id", user.getRoles().getId());
+                roleUpdate.put("name", user.getRoles().getName());
+                roleUpdate.put("created_at", user.getRoles().getCreatedAt());
+                roleUpdate.put("updated_at", user.getRoles().getUpdatedAt());
+
+                response.setRole(roleUpdate);
 
                 response.setPermissions(permissions);
 

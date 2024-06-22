@@ -10,6 +10,7 @@ export default {
 
     //root state data property
     token: localStorage.getItem("token") || "",
+    refreshToken: localStorage.getItem("refresh-token") || "",
     user: localStorage.getItem("user") || "",
     role: localStorage.getItem("role") || "",
     permissions: [],

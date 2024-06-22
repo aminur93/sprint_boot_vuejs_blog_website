@@ -9,12 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 60000)
 @RestController
 @RequestMapping("/api/v1/admin/category")
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('category-list')")
     public ResponseEntity<PaginationResponse<Category>> index(
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestParam(defaultValue = "1") int page,
@@ -36,6 +39,7 @@ public class CategoryController {
     }
 
     @GetMapping("/all-categories")
+    @PreAuthorize("hasAuthority('category-list')")
     public ResponseEntity<ResponseWrapper> getAllCategories(){
 
         List<Category> categories = categoryService.getAllCategories();
@@ -51,6 +55,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('category-create')")
     public ResponseEntity<ResponseWrapper> store(@Valid @RequestBody aminurdev.com.backend.domain.request.Category categoryRequest){
 
         try{
@@ -80,6 +85,7 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('category-edit')")
     public ResponseEntity<ResponseWrapper> edit(@PathVariable("id") Integer categoryId){
 
         try{
@@ -87,7 +93,7 @@ public class CategoryController {
             Category category = categoryService.edit(categoryId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(category),
+                    category,
                     "Category fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -120,6 +126,7 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('category-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer categoryId, @Valid @RequestBody aminurdev.com.backend.domain.request.Category categoryRequest){
 
         try{
@@ -160,6 +167,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('category-delete')")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable("id") Integer categoryId){
 
         try{

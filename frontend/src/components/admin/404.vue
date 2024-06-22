@@ -20,7 +20,7 @@ export default {
                   Look like you're lost
                 </h3>
 
-                <p>the page you are looking for not avaible!</p>
+                <p>the page you are looking for not available!</p>
 
                 <router-link to="/dashboard" class="link_404">Go to Home</router-link>
               </div>

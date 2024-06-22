@@ -43,8 +43,4 @@ public class Permission {
     {
         updatedAt = LocalDateTime.now();
     }
-
-    @OneToMany(mappedBy = "permission")
-    @JsonManagedReference
-    private List<Menu> menus;
 }

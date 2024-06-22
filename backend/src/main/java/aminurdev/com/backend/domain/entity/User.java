@@ -1,5 +1,7 @@
 package aminurdev.com.backend.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +49,7 @@ public class User implements UserDetails {
     private String emailVerifiedAt;
 
     @Column(name = "password")
+    @JsonIgnoreProperties({"password"})
     private String password;
 
     @Column(name = "remember_token")
@@ -64,6 +67,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @JsonIgnoreProperties({"permissions", "authorities"})
     private Role roles;
 
     @PrePersist

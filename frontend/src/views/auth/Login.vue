@@ -1,4 +1,7 @@
 <script>
+import {http} from "@/service/HttpService";
+import {mapState} from "vuex";
+
 export default {
   name: "AdminLogin",
 
@@ -7,11 +10,17 @@ export default {
       email: '',
       password: '',
       loading: true,
-      errors: {}
     }
   },
 
-  computed: {},
+  computed: {
+    ...mapState({
+      message: state => state.success_message,
+      errors: state => state.errors,
+      success_status: state => state.success_status,
+      error_status: state => state.error_status
+    })
+  },
 
   watch: {},
 
@@ -21,10 +30,50 @@ export default {
   methods: {
     login: function(){
       try {
+        console.log("login")
 
-        console.log('success')
+        let formData = new FormData();
+
+        formData.append('email', this.email);
+        formData.append('password', this.password);
+
+        return http().post('v1/auth/login', formData).then(res => {
+          if (res.data.statusCode === 200)
+          {
+            this.$store.commit('SET_TOKEN', res.data.token);
+            this.$store.commit('SET_REFRESH_TOKEN', res.data.refreshToken);
+            this.$store.commit('SET_USER', res.data.user);
+            this.$store.commit('SET_ROLE', res.data.role);
+            this.$store.commit('SET_PERMISSION', res.data.permissions);
+            this.$store.commit('SET_MENU', res.data.menus);
+
+            this.$swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            });
+            this.$router.push('/dashboard');
+          }
+        }).catch(err => {
+          const errors = err.response.data.errors;
+          const errorStatus = err.response.status;
+          this.$store.commit("SET_ERROR", { errors, errorStatus });
+          throw err;
+        })
       }catch (e) {
-        console.log(e);
+        if (this.error_status === 422)
+        {
+          console.log('error');
+        }else {
+          this.$swal.fire({
+            icon: 'error',
+            text: 'Oops',
+            title: 'Something wen wrong!!!',
+          });
+        }
       }
     }
   }
