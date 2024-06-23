@@ -45,7 +45,7 @@ public class CategoryController {
         List<Category> categories = categoryService.getAllCategories();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(categories),
+                categories,
                 "Category fetch successful",
                 "true",
                 HttpStatus.OK.value()

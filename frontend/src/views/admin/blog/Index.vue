@@ -4,21 +4,26 @@ import {mapState} from "vuex";
 import {http} from "@/service/HttpService";
 
 export default {
-  name: "SubCategoryIndex",
+  name: "BlogIndex",
   mixins: [PermissionMixins],
 
   data(){
     return{
-      totalSubCategories: 0,
-      subCategories: [],
+      totalBlogs: 0,
+      blogs: [],
       loading: true,
       options: {},
       search: '',
       headers: [
         { title: 'ID', key: 'id', sortable: false },
-        { title: 'Category', key: 'category_id', sortable: false },
-        { title: 'Name', key: 'name' },
-        { title: 'Description', key: 'description' },
+        { title: 'Image', key: 'image' },
+        { title: 'Category', key: 'category_id' },
+        { title: 'Sub-Category', key: 'sub_category_id' },
+        { title: 'Author', key: 'author' },
+        { title: 'Title', key: 'title' },
+        { title: 'Slogan', key: 'slogan' },
+        { title: 'Date', key: 'date' },
+        { title: 'Tag', key: 'tag' },
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions', align: 'center', sortable: false },
       ],
@@ -34,43 +39,43 @@ export default {
     },
 
     hasDeletePermission() {
-      return this.checkPermission('subCategory-delete');
+      return this.checkPermission('blog-delete');
     },
 
     ...mapState({
-      message: state => state.sub_category.success_message,
-      errors: state => state.sub_category.errors,
-      success_status: state => state.sub_category.success_status,
-      error_status: state => state.sub_category.error_status
+      message: state => state.blog.success_message,
+      errors: state => state.blog.errors,
+      success_status: state => state.blog.success_status,
+      error_status: state => state.blog.error_status
     })
   },
 
   watch: {
     options: {
       handler () {
-        this.getAllSubCategories()
+        this.getAllBlogs()
       },
       deep: true,
     },
 
     search: {
       handler () {
-        this.getAllSubCategories()
+        this.getAllBlogs()
       },
     },
   },
 
   mounted() {
-    this.getAllSubCategories()
+    this.getAllBlogs()
   },
 
   methods: {
-    getAllSubCategories(){
+    getAllBlogs(){
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
 
-      http().get('http://localhost:8080/api/v1/admin/sub-category', {
+      http().get('http://localhost:8080/api/v1/admin/blog', {
         params: {
           sortBy: sortBy[0],
           sortDesc: sortDesc,
@@ -79,8 +84,8 @@ export default {
           search: this.search
         }
       }).then((result) => {
-        this.subCategories = result.data.data;
-        this.totalSubCategories = result.data.meta.total;
+        this.blogs = result.data.data;
+        this.totalBlogs = result.data.meta.total;
         this.loading = false;
       }).catch((err) => {
         console.log(err);
@@ -91,9 +96,9 @@ export default {
       return this.startIndex + item;
     },
 
-    deleteSubCategory: async function(id) {
+    deleteBlog: async function(id) {
       try {
-        await this.$store.dispatch("sub_category/DeleteSubCategory", id).then(() => {
+        await this.$store.dispatch("blog/DeleteBlog", id).then(() => {
           if (this.success_status === 200) {
             this.$swal.fire({
               toast: true,
@@ -104,7 +109,7 @@ export default {
               timer: 1500
             });
 
-            this.getAllSubCategories();
+            this.getAllBlogs();
           }
         })
       } catch (e) {
@@ -121,6 +126,11 @@ export default {
           });
         }
       }
+    },
+
+    getImageSrc(image) {
+      const src = `${this.$store.state.serverPath}/images/${image}`;
+      return src;
     }
   }
 }
@@ -134,7 +144,7 @@ export default {
 
         <v-row wrap>
           <v-col cols="6">
-            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Sub-Category</h1>
+            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Blog</h1>
           </v-col>
         </v-row>
 
@@ -143,12 +153,12 @@ export default {
             <v-card elevation="8">
               <v-row>
                 <v-col col="6">
-                  <v-card-title :class="['text-subtitle-1']">All Sub-Category Lists</v-card-title>
+                  <v-card-title :class="['text-subtitle-1']">All Blog Lists</v-card-title>
                 </v-col>
 
                 <v-col cols="6">
                   <v-card-actions class="justify-end">
-                    <v-btn color="success" @click="navigateWithPermission('subCategory-create', '/add-sub-category')">
+                    <v-btn color="success" @click="navigateWithPermission('blog-create', '/add-blog')">
                       <v-icon small left>mdi-plus</v-icon>
                       <span>Add New</span>
                     </v-btn>
@@ -160,7 +170,7 @@ export default {
 
               <v-card-text>
                 <v-card-title class="d-flex align-center pe-2" style="justify-content: space-between">
-                  <h1 :class="['text-subtitle-1', 'text-black']">Sub-Category</h1>
+                  <h1 :class="['text-subtitle-1', 'text-black']">Blog</h1>
 
                   <v-spacer></v-spacer>
 
@@ -179,10 +189,10 @@ export default {
 
                 <v-data-table-server
                     :headers="headers"
-                    :items="subCategories"
+                    :items="blogs"
                     :search="search"
                     v-model:options="options"
-                    :items-length="totalSubCategories"
+                    :items-length="totalBlogs"
                     :loading="loading"
                     item-value="name"
                     class="elevation-4"
@@ -192,8 +202,26 @@ export default {
                     <td>{{ calculateIndex(index) }}</td>
                   </template>
 
-                  <template v-slot:[`item.category_id`]="{ item }">
-                    <td>{{ item.category.name }}</td>
+                  <template v-slot:[`item.image`] = "{item}">
+                    <img :src="getImageSrc(item.image)" alt="" style="width: 100px;height: 100px">
+                  </template>
+
+                  <template v-slot:[`item.category_id`] = "{item}">
+                    <v-chip color="cyan" label>
+                      {{ item.category.name }}
+                    </v-chip>
+                  </template>
+
+                  <template v-slot:[`item.sub_category_id`] = "{item}">
+                    <v-chip color="cyan" label>
+                      {{ item.subCategory.name }}
+                    </v-chip>
+                  </template>
+
+                  <template v-slot:[`item.tag`] = "{item}">
+                    <v-chip color="cyan" label v-for="tag in item.tags" :key="tag.id" style="margin-left: 5px">
+                      {{ tag.name }}
+                    </v-chip>
                   </template>
 
                   <template v-slot:[`item.status`] = "{item}">
@@ -210,11 +238,11 @@ export default {
                   <template v-slot:[`item.actions`]="{ item }">
                     <v-row align="center" justify="center">
                       <td :class="['mx-2']">
-                        <v-btn @click="navigateWithPermission('subCategory-edit', `/edit-sub-category/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
+                        <v-btn @click="navigateWithPermission('blog-edit', `/edit-blog/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
                       </td>
 
                       <td v-if="hasDeletePermission">
-                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deleteSubCategory(item.id)"></v-btn>
+                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deleteBlog(item.id)"></v-btn>
                       </td>
                     </v-row>
                   </template>

@@ -10,6 +10,9 @@ import * as actions from "./actions";
 
 //module start
 import category from "@/store/mosules/category";
+import sub_category from "@/store/mosules/sub_category";
+import tag from "@/store/mosules/tag";
+import blog from "@/store/mosules/blog";
 //module end
 
 const store = createStore({
@@ -20,7 +23,10 @@ const store = createStore({
     actions,
 
     modules: {
-        category
+        category,
+        sub_category,
+        tag,
+        blog
     },
 
     plugins: [

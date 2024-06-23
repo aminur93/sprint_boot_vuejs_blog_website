@@ -4,21 +4,19 @@ import {mapState} from "vuex";
 import {http} from "@/service/HttpService";
 
 export default {
-  name: "SubCategoryIndex",
+  name: "TagIndex",
   mixins: [PermissionMixins],
 
   data(){
     return{
-      totalSubCategories: 0,
-      subCategories: [],
+      totalTags: 0,
+      tags: [],
       loading: true,
       options: {},
       search: '',
       headers: [
         { title: 'ID', key: 'id', sortable: false },
-        { title: 'Category', key: 'category_id', sortable: false },
         { title: 'Name', key: 'name' },
-        { title: 'Description', key: 'description' },
         { title: 'Status', key: 'status' },
         { title: 'Actions', key: 'actions', align: 'center', sortable: false },
       ],
@@ -34,43 +32,43 @@ export default {
     },
 
     hasDeletePermission() {
-      return this.checkPermission('subCategory-delete');
+      return this.checkPermission('tag-delete');
     },
 
     ...mapState({
-      message: state => state.sub_category.success_message,
-      errors: state => state.sub_category.errors,
-      success_status: state => state.sub_category.success_status,
-      error_status: state => state.sub_category.error_status
+      message: state => state.tag.success_message,
+      errors: state => state.tag.errors,
+      success_status: state => state.tag.success_status,
+      error_status: state => state.tag.error_status
     })
   },
 
   watch: {
     options: {
       handler () {
-        this.getAllSubCategories()
+        this.getAllTags()
       },
       deep: true,
     },
 
     search: {
       handler () {
-        this.getAllSubCategories()
+        this.getAllTags()
       },
     },
   },
 
   mounted() {
-    this.getAllSubCategories()
+    this.getAllTags();
   },
 
   methods: {
-    getAllSubCategories(){
+    getAllTags(){
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
 
-      http().get('http://localhost:8080/api/v1/admin/sub-category', {
+      http().get('http://localhost:8080/api/v1/admin/tag', {
         params: {
           sortBy: sortBy[0],
           sortDesc: sortDesc,
@@ -79,8 +77,8 @@ export default {
           search: this.search
         }
       }).then((result) => {
-        this.subCategories = result.data.data;
-        this.totalSubCategories = result.data.meta.total;
+        this.tags = result.data.data;
+        this.totalTags = result.data.meta.total;
         this.loading = false;
       }).catch((err) => {
         console.log(err);
@@ -91,9 +89,9 @@ export default {
       return this.startIndex + item;
     },
 
-    deleteSubCategory: async function(id) {
+    deleteTag: async function(id) {
       try {
-        await this.$store.dispatch("sub_category/DeleteSubCategory", id).then(() => {
+        await this.$store.dispatch("tag/DeleteTag", id).then(() => {
           if (this.success_status === 200) {
             this.$swal.fire({
               toast: true,
@@ -104,7 +102,7 @@ export default {
               timer: 1500
             });
 
-            this.getAllSubCategories();
+            this.getAllTags();
           }
         })
       } catch (e) {
@@ -134,7 +132,7 @@ export default {
 
         <v-row wrap>
           <v-col cols="6">
-            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Sub-Category</h1>
+            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Tag</h1>
           </v-col>
         </v-row>
 
@@ -143,12 +141,12 @@ export default {
             <v-card elevation="8">
               <v-row>
                 <v-col col="6">
-                  <v-card-title :class="['text-subtitle-1']">All Sub-Category Lists</v-card-title>
+                  <v-card-title :class="['text-subtitle-1']">All Tag Lists</v-card-title>
                 </v-col>
 
                 <v-col cols="6">
                   <v-card-actions class="justify-end">
-                    <v-btn color="success" @click="navigateWithPermission('subCategory-create', '/add-sub-category')">
+                    <v-btn color="success" @click="navigateWithPermission('tag-create', '/add-tag')">
                       <v-icon small left>mdi-plus</v-icon>
                       <span>Add New</span>
                     </v-btn>
@@ -160,7 +158,7 @@ export default {
 
               <v-card-text>
                 <v-card-title class="d-flex align-center pe-2" style="justify-content: space-between">
-                  <h1 :class="['text-subtitle-1', 'text-black']">Sub-Category</h1>
+                  <h1 :class="['text-subtitle-1', 'text-black']">Tag</h1>
 
                   <v-spacer></v-spacer>
 
@@ -179,10 +177,10 @@ export default {
 
                 <v-data-table-server
                     :headers="headers"
-                    :items="subCategories"
+                    :items="tags"
                     :search="search"
                     v-model:options="options"
-                    :items-length="totalSubCategories"
+                    :items-length="totalTags"
                     :loading="loading"
                     item-value="name"
                     class="elevation-4"
@@ -190,10 +188,6 @@ export default {
                 >
                   <template v-slot:[`item.id`]="{ index }">
                     <td>{{ calculateIndex(index) }}</td>
-                  </template>
-
-                  <template v-slot:[`item.category_id`]="{ item }">
-                    <td>{{ item.category.name }}</td>
                   </template>
 
                   <template v-slot:[`item.status`] = "{item}">
@@ -210,11 +204,11 @@ export default {
                   <template v-slot:[`item.actions`]="{ item }">
                     <v-row align="center" justify="center">
                       <td :class="['mx-2']">
-                        <v-btn @click="navigateWithPermission('subCategory-edit', `/edit-sub-category/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
+                        <v-btn @click="navigateWithPermission('tag-edit', `/edit-tag/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
                       </td>
 
                       <td v-if="hasDeletePermission">
-                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deleteSubCategory(item.id)"></v-btn>
+                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deleteTag(item.id)"></v-btn>
                       </td>
                     </v-row>
                   </template>

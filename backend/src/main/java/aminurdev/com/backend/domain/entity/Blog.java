@@ -1,5 +1,6 @@
 package aminurdev.com.backend.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +30,7 @@ public class Blog {
 
     @ManyToOne
     @JoinColumn(name = "sub_category_id", nullable = false)
+    @JsonIgnoreProperties({"category"})
     private SubCategory subCategory;
 
     @ManyToMany

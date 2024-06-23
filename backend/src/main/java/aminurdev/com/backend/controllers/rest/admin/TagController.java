@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 60000)
 @RestController
 @RequestMapping("/api/v1/admin/tag")
 @RequiredArgsConstructor
@@ -44,7 +45,7 @@ public class TagController {
         List<Tag> tags = tagService.getAllTag();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(tags),
+                tags,
                 "All tags fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -65,7 +66,7 @@ public class TagController {
                     Collections.singletonList(createdTag),
                     "Tag created successfully",
                     "true",
-                    HttpStatus.OK.value()
+                    HttpStatus.CREATED.value()
             );
 
             return ResponseEntity.ok(responseWrapper);
@@ -92,7 +93,7 @@ public class TagController {
             Tag tag = tagService.edit(tagId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(tag),
+                    tag,
                     "Tag fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -124,7 +125,7 @@ public class TagController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('tag-update')")
+    @PreAuthorize("hasAuthority('tag-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer tagId, @Valid @RequestBody aminurdev.com.backend.domain.request.Tag tagRequest){
 
         try{

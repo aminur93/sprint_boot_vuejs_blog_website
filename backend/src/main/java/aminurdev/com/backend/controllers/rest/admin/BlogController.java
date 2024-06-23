@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequestMapping("/api/v1/admin/blog")
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class BlogController {
         List<Blog> blogs = blogService.getAllBlogs();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(blogs),
+                blogs,
                 "Blogs fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -65,7 +66,7 @@ public class BlogController {
                     Collections.singletonList(blog),
                     "Blog create successful",
                     "true",
-                    HttpStatus.OK.value()
+                    HttpStatus.CREATED.value()
             );
 
             return ResponseEntity.ok(responseWrapper);
@@ -91,7 +92,7 @@ public class BlogController {
             Blog blog = blogService.edit(blogId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(blog),
+                    blog,
                     "Blog fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -124,7 +125,7 @@ public class BlogController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('blog-update')")
+    @PreAuthorize("hasAuthority('blog-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer blogId, @Valid @ModelAttribute aminurdev.com.backend.domain.request.Blog blogRequest){
 
         try {

@@ -96,7 +96,7 @@ export default {
                               variant="outlined"
                               required
                           ></v-text-field>
-                          <p v-if="errors.name" class="error custom_error">{{errors.name[0]}}</p>
+                          <p v-if="errors.name" class="error custom_error">{{errors.name}}</p>
                         </v-col>
 
                         <v-col cols="12" md="8" sm="12" lg="12">
@@ -105,7 +105,7 @@ export default {
                               label="Description"
                               variant="outlined"
                           ></v-textarea>
-                          <p v-if="errors.description" class="error custom_error">{{errors.description[0]}}</p>
+                          <p v-if="errors.description" class="error custom_error">{{errors.description}}</p>
                         </v-col>
 
                         <v-col cols="12" md="8" sm="12" lg="12">
@@ -113,7 +113,7 @@ export default {
                               v-model="add_category.status"
                               label="Status"
                           ></v-checkbox>
-                          <p v-if="errors.status" class="error custom_error">{{errors.status[0]}}</p>
+                          <p v-if="errors.status" class="error custom_error">{{errors.status}}</p>
                         </v-col>
 
                         <v-row wrap>

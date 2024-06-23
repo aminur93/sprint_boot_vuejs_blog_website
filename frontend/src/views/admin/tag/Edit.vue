@@ -3,50 +3,45 @@ import {mapActions, mapState} from "vuex";
 import router from "@/router";
 
 export default {
-  name: "SubCategoryCreate",
+  name: "TagEdit",
 
   data(){
     return{
-      add_sub_category: {
-        category_id: null,
-        name: '',
-        description: '',
-        status: ''
-      }
+
     }
   },
 
   computed: {
     ...mapState({
-      categories: state => state.category.categories,
-      message: state => state.sub_category.success_message,
-      errors: state => state.sub_category.errors,
-      success_status: state => state.sub_category.success_status,
-      error_status: state => state.sub_category.error_status
+      editTag: state => state.tag.tag,
+      message: state => state.tag.success_message,
+      errors: state => state.tag.errors,
+      success_status: state => state.tag.success_status,
+      error_status: state => state.tag.error_status
     })
   },
 
   mounted() {
-    this.getAllCategory();
+    this.getEditTag(this.$route.params.id);
   },
 
   methods: {
+
     ...mapActions({
-      getAllCategory: "category/GetAllCategory"
+      getEditTag: "tag/GetSingleTag"
     }),
 
-    addSubCategory: async function(){
+    updateTag: async function(){
       try {
+        let id = this.$route.params.id;
         let formData = new FormData();
 
-        formData.append('name', this.add_sub_category.name);
-        formData.append('description', this.add_sub_category.description);
-        formData.append('status', this.add_sub_category.status);
-        formData.append('category_id', this.add_sub_category.category_id);
+        formData.append('name', this.editTag.name);
+        formData.append('status', this.editTag.status);
 
-        await this.$store.dispatch('sub_category/StoreSubCategory', formData).then(() => {
+        await this.$store.dispatch('tag/UpdateTag', {id:id, data:formData}).then(() => {
 
-          if (this.success_status === 201)
+          if (this.success_status === 200)
           {
             this.$swal.fire({
               toast: true,
@@ -57,10 +52,10 @@ export default {
               timer: 1500
             });
 
-            this.add_sub_category = {};
+            this.getEditTag(id);
 
             setTimeout(function () {
-              router.push({path: '/sub-category'});
+              router.push({path: '/tag'});
             },2000)
           }
         })
@@ -82,60 +77,39 @@ export default {
 </script>
 
 <template>
-  <div id="create">
+  <div id="edit">
     <v-row class="mx-5 mt-5">
       <v-col cols="12">
         <v-row>
           <v-col cols="12" md="12" sm="12" lg="12">
             <v-card>
-              <v-card-title><h3>Add Sub-Category</h3></v-card-title>
+              <v-card-title><h3>Edit Tag</h3></v-card-title>
 
               <v-divider></v-divider>
 
               <v-card-text>
-                <v-form v-on:submit.prevent="addSubCategory">
+                <v-form v-on:submit.prevent="updateTag">
                   <v-col cols="12">
                     <v-row wrap>
 
                       <v-col cols="12" md="8" sm="12" lg="12">
-                        <v-select
-                            variant="outlined"
-                            v-model="add_sub_category.category_id"
-                            :items="categories"
-                            item-title="name"
-                            item-value="id"
-                            label="select Category"
-                        ></v-select>
-                        <p v-if="errors.category_id" class="error custom_error">{{errors.category_id[0]}}</p>
-                      </v-col>
-
-                      <v-col cols="12" md="8" sm="12" lg="12">
                         <v-text-field
                             type="text"
-                            v-model="add_sub_category.name"
+                            v-model="editTag.name"
                             label="Name"
                             persistent-hint
                             variant="outlined"
                             required
                         ></v-text-field>
-                        <p v-if="errors.name" class="error custom_error">{{errors.name[0]}}</p>
-                      </v-col>
-
-                      <v-col cols="12" md="8" sm="12" lg="12">
-                        <v-textarea
-                            v-model="add_sub_category.description"
-                            label="Description"
-                            variant="outlined"
-                        ></v-textarea>
-                        <p v-if="errors.description" class="error custom_error">{{errors.description[0]}}</p>
+                        <p v-if="errors.name" class="error custom_error">{{errors.name}}</p>
                       </v-col>
 
                       <v-col cols="12" md="8" sm="12" lg="12">
                         <v-checkbox
-                            v-model="add_sub_category.status"
+                            v-model="editTag.status"
                             label="Status"
                         ></v-checkbox>
-                        <p v-if="errors.status" class="error custom_error">{{errors.status[0]}}</p>
+                        <p v-if="errors.status" class="error custom_error">{{errors.status}}</p>
                       </v-col>
 
                       <v-row wrap>
@@ -145,7 +119,7 @@ export default {
                               color="primary"
                               class="custom-btn mr-2"
                               router
-                              to="/sub-category"
+                              to="/tag"
                           >
                             Back
                           </v-btn>
@@ -172,5 +146,7 @@ export default {
 </template>
 
 <style scoped>
-
+.error{
+  color: red;
+}
 </style>

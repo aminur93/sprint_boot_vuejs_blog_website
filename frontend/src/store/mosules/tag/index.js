@@ -4,8 +4,8 @@
 import {http} from "@/service/HttpService";
 
 const state = {
-    categories: [],
-    category: {},
+    tags: [],
+    tag: {},
     success_message: "",
     errors: {},
     error_message: "",
@@ -17,36 +17,37 @@ const state = {
 /*                              Mutations Define                              */
 /* -------------------------------------------------------------------------- */
 const mutations = {
-    GET_ALL_CATEGORY: (state, data) => {
-        state.categories = data;
+    GET_ALL_TAG: (state, data) => {
+        state.tags = data;
     },
 
-    STORE_CATEGORY: (state, data) => {
-        if (state.categories.push(data.data))
+    STORE_TAG: (state, data) => {
+        if (state.tags.push(data.data))
         {
             state.success_message = data.data.message;
             state.success_status = data.status;
+            console.log(state.success_status);
         }else {
             state.success_message = '';
         }
     },
 
-    GET_SINGLE_CATEGORY: (state, data) => {
-        state.category = data;
+    GET_SINGLE_TAG: (state, data) => {
+        state.tag = data;
     },
 
-    UPDATE_CATEGORY: (state, data) => {
-        if (state.categories.push(data.data))
+    UPDATE_TAG: (state, data) => {
+        if (state.tags.push(data.data))
         {
             state.success_message = data.data.message;
             state.success_status = data.status;
         }
     },
 
-    DELETE_CATEGORY: (state, {id, data}) => {
+    DELETE_TAG: (state, {id, data}) => {
         if (id)
         {
-            state.categories = state.categories.filter(item => {
+            state.tags = state.tags.filter(item => {
                 return item.id !== id;
             })
 
@@ -65,11 +66,11 @@ const mutations = {
 /*                               Actions Define                               */
 /* -------------------------------------------------------------------------- */
 const actions = {
-    /*get all category start*/
-    async GetAllCategory({ commit }) {
+    /*get all tag start*/
+    async GetAllTag({ commit }) {
         try {
-            const result = await http().get("v1/admin/category/all-categories");
-            commit("GET_ALL_CATEGORY", result.data.data);
+            const result = await http().get("v1/admin/tag/all-tags");
+            commit("GET_ALL_TAG", result.data.data);
         } catch (err) {
             const errors = err.response.data.errors;
             const errorStatus = err.response.status;
@@ -77,14 +78,14 @@ const actions = {
             throw err;
         }
     },
-    /*get all category end*/
+    /*get all tag end*/
 
-    /*store category start*/
-    StoreCategory: ({commit}, data) => {
+    /*store tag start*/
+    StoreTag: ({commit}, data) => {
         return http()
-            .post("v1/admin/category", data)
+            .post("v1/admin/tag", data)
             .then((result) => {
-                commit("STORE_CATEGORY", result);
+                commit("STORE_TAG", result);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -93,14 +94,14 @@ const actions = {
                 throw err;
             })
     },
-    /*store category end*/
+    /*store tag end*/
 
-    /*get single category start*/
-    GetSingleCategory: ({commit}, id) => {
+    /*get single tag start*/
+    GetSingleTag: ({commit}, id) => {
         return http()
-            .get(`v1/admin/category/${id}`)
+            .get(`v1/admin/tag/${id}`)
             .then((result) => {
-                commit("GET_SINGLE_CATEGORY", result.data.data);
+                commit("GET_SINGLE_TAG", result.data.data);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -109,14 +110,14 @@ const actions = {
                 throw err;
             })
     },
-    /*get single category end*/
+    /*get single tag end*/
 
-    /*update category start*/
-    UpdateCategory: ({commit}, {id, data}) => {
+    /*update tag start*/
+    UpdateTag: ({commit}, {id, data}) => {
         return http()
-            .put(`v1/admin/category/${id}`, data)
+            .put(`v1/admin/tag/${id}`, data)
             .then((result) => {
-                commit("UPDATE_CATEGORY", result);
+                commit("UPDATE_TAG", result);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -125,14 +126,14 @@ const actions = {
                 throw err;
             })
     },
-    /*update category end*/
+    /*update tag end*/
 
-    /*destroy category start*/
-    DeleteCategory: ({commit}, id) => {
+    /*destroy tag start*/
+    DeleteTag: ({commit}, id) => {
         return http()
-            .delete(`v1/admin/category/${id}`)
+            .delete(`v1/admin/tag/${id}`)
             .then((result) => {
-                commit("DELETE_CATEGORY", {id:id, data:result});
+                commit("DELETE_TAG", {id:id, data:result});
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -141,7 +142,7 @@ const actions = {
                 throw err;
             })
     },
-    /*destroy category end*/
+    /*destroy tag end*/
 }
 
 /* -------------------------------------------------------------------------- */

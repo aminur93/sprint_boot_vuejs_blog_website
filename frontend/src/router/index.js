@@ -1,12 +1,12 @@
 import {createWebHistory, createRouter} from "vue-router";
 import AuthRouter from "@/router/auth/AuthRouter";
 import AdminRouter from "@/router/admin/AdminRouter";
-import BlogRouter from "@/router/blog/BlogRouter";
+import FrontRouter from "@/router/front/FrontRouter";
 
 const routes = [
     ...AuthRouter,
     ...AdminRouter,
-    ...BlogRouter
+    ...FrontRouter
 ];
 
 const router = createRouter({

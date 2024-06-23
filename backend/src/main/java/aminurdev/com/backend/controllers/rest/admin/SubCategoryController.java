@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*",  maxAge = 60000)
 @RestController
 @RequestMapping("/api/v1/admin/sub-category")
 @RequiredArgsConstructor
@@ -37,13 +38,14 @@ public class SubCategoryController {
         return ResponseEntity.ok(paginationResponse);
     }
 
-    @GetMapping("/all-subCategory")
+    @GetMapping("/all-subCategories")
+    @PreAuthorize("hasAuthority('subCategory-list')")
     public ResponseEntity<ResponseWrapper> getAllSubCategories()
     {
         List<SubCategory> subCategories = subCategoryService.getAllSubCategories();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(subCategories),
+                subCategories,
                 "SubCategory fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -90,7 +92,7 @@ public class SubCategoryController {
             SubCategory subCategory = subCategoryService.edit(subCategoryId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(subCategory),
+                    subCategory,
                     "SubCategory fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -119,7 +121,7 @@ public class SubCategoryController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('subCategory-update')")
+    @PreAuthorize("hasAuthority('subCategory-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer subCategoryId, @Valid @RequestBody aminurdev.com.backend.domain.request.SubCategory subCategoryRequest)
     {
         try{

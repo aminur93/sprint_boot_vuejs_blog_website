@@ -5,6 +5,8 @@ import PermissionRouter from "@/router/admin/PermissionRouter";
 import CategoryRouter from "@/router/admin/CategoryRouter";
 import CommonRouter from "@/router/admin/CommonRouter";
 import SubCategoryRouter from "@/router/admin/SubCategoryRouter";
+import TagRouter from "@/router/admin/TagRouter";
+import BlogRouter from "@/router/admin/BlogRouter";
 
 export default [
     {
@@ -20,6 +22,8 @@ export default [
             ...PermissionRouter,
             ...CategoryRouter,
             ...SubCategoryRouter,
+            ...TagRouter,
+            ...BlogRouter,
             ...CommonRouter
         ],
 
