@@ -113,7 +113,7 @@ const actions = {
 
     /*update category start*/
     UpdateBlog: ({commit}, {id, data}) => {
-        return http()
+        return httpFile()
             .put(`v1/admin/blog/${id}`, data)
             .then((result) => {
                 commit("UPDATE_BLOG", result);

@@ -94,6 +94,7 @@ export default {
             });
 
             this.add_new_blog = {};
+            this.imagePreview = null;
 
             setTimeout(function () {
               router.push({path: '/blog'});
