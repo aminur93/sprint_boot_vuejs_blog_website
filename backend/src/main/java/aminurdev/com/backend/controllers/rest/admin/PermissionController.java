@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/admin/permission")
@@ -44,7 +45,7 @@ public class PermissionController {
         List<Permission> permissions = permissionService.getAllPermission();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(permissions),
+                permissions,
                 "All Permission fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -69,7 +70,7 @@ public class PermissionController {
                     HttpStatus.CREATED.value()
             );
 
-            return ResponseEntity.ok(responseWrapper);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
 
         }catch (Exception e){
 
@@ -93,7 +94,7 @@ public class PermissionController {
             Permission permission = permissionService.edit(permissionId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(permission),
+                    permission,
                     "Permission fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -126,7 +127,7 @@ public class PermissionController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('permission-update')")
+    @PreAuthorize("hasAuthority('permission-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer permissionId, @Valid @RequestBody aminurdev.com.backend.domain.request.Permission permissionRequest)
     {
         try{

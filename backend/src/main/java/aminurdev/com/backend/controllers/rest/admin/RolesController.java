@@ -1,6 +1,5 @@
 package aminurdev.com.backend.controllers.rest.admin;
 
-import aminurdev.com.backend.domain.entity.Permission;
 import aminurdev.com.backend.domain.entity.Role;
 import aminurdev.com.backend.response.ResponseWrapper;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
@@ -10,20 +9,23 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequestMapping("/api/v1/admin/role")
 @RequiredArgsConstructor
-public class RoleController {
+public class RolesController {
 
     private final RoleService roleService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('role-list')")
     public ResponseEntity<PaginationResponse<Role>> index(
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestParam(defaultValue = "1") int page,
@@ -36,22 +38,24 @@ public class RoleController {
         return ResponseEntity.ok(paginationResponse);
     }
 
-//    @GetMapping
-//    public ResponseEntity<ResponseWrapper> getAllRole(){
-//
-//        List<Role> roles = roleService.getAllRole();
-//
-//        ResponseWrapper responseWrapper = new ResponseWrapper().success(
-//                Collections.singletonList(roles),
-//                "All Role fetch successful",
-//                "true",
-//                HttpStatus.OK.value()
-//        );
-//
-//        return ResponseEntity.ok(responseWrapper);
-//    }
+    @GetMapping("/all-roles")
+    @PreAuthorize("hasAuthority('role-list')")
+    public ResponseEntity<ResponseWrapper> getAllRole(){
+
+        List<Role> roles = roleService.getAllRole();
+
+        ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                roles,
+                "All Role fetch successful",
+                "true",
+                HttpStatus.OK.value()
+        );
+
+        return ResponseEntity.ok(responseWrapper);
+    }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('role-create')")
     public ResponseEntity<ResponseWrapper> store(@Valid @RequestBody aminurdev.com.backend.domain.request.Role roleRequest){
 
         try{
@@ -65,7 +69,7 @@ public class RoleController {
                     HttpStatus.CREATED.value()
             );
 
-            return ResponseEntity.ok(responseWrapper);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
 
         }catch (Exception exception){
 
@@ -81,6 +85,7 @@ public class RoleController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('role-edit')")
     public ResponseEntity<ResponseWrapper> edit(@PathVariable("id") Integer roleId){
 
         try{
@@ -88,7 +93,7 @@ public class RoleController {
             Role role = roleService.edit(roleId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(role),
+                    role,
                     "Role fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -121,6 +126,7 @@ public class RoleController {
     }
 
     @PutMapping("{id}")
+    @PreAuthorize("hasAuthority('role-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer roleId, @Valid @RequestBody aminurdev.com.backend.domain.request.Role roleRequest){
 
         try{
@@ -161,6 +167,7 @@ public class RoleController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('role-delete')")
     public ResponseEntity<ResponseWrapper> delete(@PathVariable("id") Integer roleId){
         try{
 

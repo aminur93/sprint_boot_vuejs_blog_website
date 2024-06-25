@@ -122,7 +122,7 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    @PreAuthorize("hasAuthority('user-update')")
+    @PreAuthorize("hasAuthority('user-edit')")
     public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer userId, @Valid @RequestBody aminurdev.com.backend.domain.request.User userRequest) {
         try{
             User user = userService.update(userId, userRequest);

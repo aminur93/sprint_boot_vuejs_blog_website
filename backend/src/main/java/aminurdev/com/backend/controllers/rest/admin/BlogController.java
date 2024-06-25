@@ -69,7 +69,7 @@ public class BlogController {
                     HttpStatus.CREATED.value()
             );
 
-            return ResponseEntity.ok(responseWrapper);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
 
         } catch (Exception exception) {
 

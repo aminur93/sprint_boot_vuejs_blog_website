@@ -1,38 +1,45 @@
 <script>
-import {mapState} from "vuex";
+import {mapActions, mapState} from "vuex";
 import router from "@/router";
 
 export default {
-  name: "TagCreate",
-
+  name: "RoleCreate",
   data(){
     return{
-      add_tag: {
+      add_role: {
         name: '',
-        status: ''
+        permission: []
       }
     }
   },
 
   computed: {
     ...mapState({
-      message: state => state.tag.success_message,
-      errors: state => state.tag.errors,
-      success_status: state => state.tag.success_status,
-      error_status: state => state.tag.error_status
+      permissions: state => state.permission.permissions,
+      message: state => state.role.success_message,
+      errors: state => state.role.errors,
+      success_status: state => state.role.success_status,
+      error_status: state => state.role.error_status
     })
   },
 
+  mounted() {
+    this.getAllPermission();
+  },
+
   methods: {
-    addTag: async function(){
+    ...mapActions({
+      getAllPermission: "permission/GetAllPermission"
+    }),
+
+    addRole: async function(){
       try {
         let formData = new FormData();
 
-        formData.append('name', this.add_tag.name);
-        formData.append('status', this.add_tag.status);
+        formData.append('name', this.add_role.name);
+        this.add_role.permission.forEach(item => formData.append('permissions[]', item));
 
-        await this.$store.dispatch('tag/StoreTag', formData).then(() => {
-
+        await this.$store.dispatch("role/StoreRole", formData).then(() => {
           if (this.success_status === 201)
           {
             this.$swal.fire({
@@ -44,10 +51,10 @@ export default {
               timer: 1500
             });
 
-            this.add_tag = {};
+            this.add_role = {};
 
             setTimeout(function () {
-              router.push({path: '/tag'});
+              router.push({path: '/role'});
             },2000)
           }
         })
@@ -75,19 +82,19 @@ export default {
         <v-row>
           <v-col cols="12" md="12" sm="12" lg="12">
             <v-card>
-              <v-card-title><h3>Add Tag</h3></v-card-title>
+              <v-card-title><h3>Add Role</h3></v-card-title>
 
               <v-divider></v-divider>
 
               <v-card-text>
-                <v-form v-on:submit.prevent="addTag">
+                <v-form v-on:submit.prevent="addRole">
                   <v-col cols="12">
                     <v-row wrap>
 
                       <v-col cols="12" md="8" sm="12" lg="12">
                         <v-text-field
                             type="text"
-                            v-model="add_tag.name"
+                            v-model="add_role.name"
                             label="Name"
                             persistent-hint
                             variant="outlined"
@@ -96,13 +103,20 @@ export default {
                         <p v-if="errors.name" class="error custom_error">{{errors.name}}</p>
                       </v-col>
 
-                      <v-col cols="12" md="8" sm="12" lg="12">
-                        <v-checkbox
-                            v-model="add_tag.status"
-                            label="Status"
-                        ></v-checkbox>
-                        <p v-if="errors.status" class="error custom_error">{{errors.status}}</p>
-                      </v-col>
+                      <strong :class="['ml-3']">Permission: </strong>
+                      <v-divider :class="['mt-5', 'ml-3', 'mr-2']"></v-divider>
+
+                      <v-row>
+                        <v-col cols="3" v-for="permission in permissions" :key="permission.id">
+                          <v-checkbox
+                              v-model="add_role.permission"
+                              color="green"
+                              :value="permission.id"
+                              :label="permission.name"
+                              hide-details>
+                          </v-checkbox>
+                        </v-col>
+                      </v-row>
 
                       <v-row wrap>
                         <v-col cols="12" md="8" sm="12" lg="12" :class="['d-flex', 'justify-end']">
@@ -111,7 +125,7 @@ export default {
                               color="primary"
                               class="custom-btn mr-2"
                               router
-                              to="/tag"
+                              to="/permission"
                           >
                             Back
                           </v-btn>

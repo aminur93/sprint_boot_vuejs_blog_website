@@ -13,6 +13,8 @@ import category from "@/store/mosules/category";
 import sub_category from "@/store/mosules/sub_category";
 import tag from "@/store/mosules/tag";
 import blog from "@/store/mosules/blog";
+import permission from "@/store/mosules/user_management/permission";
+import role from "@/store/mosules/user_management/role";
 //module end
 
 const store = createStore({
@@ -26,7 +28,9 @@ const store = createStore({
         category,
         sub_category,
         tag,
-        blog
+        blog,
+        permission,
+        role
     },
 
     plugins: [

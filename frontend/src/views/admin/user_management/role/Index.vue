@@ -4,13 +4,13 @@ import {mapState} from "vuex";
 import {http} from "@/service/HttpService";
 
 export default {
-  name: "PermissionIndex",
+  name: "RoleIndex",
   mixins: [PermissionMixins],
 
   data(){
     return{
-      totalPermissions: 0,
-      permissions: [],
+      totalRoles: 0,
+      roles: [],
       loading: true,
       options: {},
       search: '',
@@ -30,44 +30,44 @@ export default {
       return (currentPage - 1) * itemsPerPage + 1;
     },
 
-    hasDeletePermission() {
-      return this.checkPermission('permission-delete');
+    hasDeleteRole() {
+      return this.checkPermission('role-delete');
     },
 
     ...mapState({
-      message: state => state.permission.success_message,
-      errors: state => state.permission.errors,
-      success_status: state => state.permission.success_status,
-      error_status: state => state.permission.error_status
+      message: state => state.role.success_message,
+      errors: state => state.role.errors,
+      success_status: state => state.role.success_status,
+      error_status: state => state.role.error_status
     })
   },
 
   watch: {
     options: {
       handler () {
-        this.getAllPermissions()
+        this.getAllRoles()
       },
       deep: true,
     },
 
     search: {
       handler () {
-        this.getAllPermissions()
+        this.getAllRoles()
       },
     },
   },
 
   mounted() {
-    this.getAllPermissions();
+    this.getAllRoles();
   },
 
   methods: {
-    getAllPermissions(){
+    getAllRoles(){
       this.loading = true
 
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
 
-      http().get('http://localhost:8080/api/v1/admin/permission', {
+      http().get('http://localhost:8080/api/v1/admin/role', {
         params: {
           sortBy: sortBy[0],
           sortDesc: sortDesc,
@@ -76,8 +76,8 @@ export default {
           search: this.search
         }
       }).then((result) => {
-        this.permissions = result.data.data;
-        this.totalPermissions = result.data.meta.total;
+        this.roles = result.data.data;
+        this.totalRoles = result.data.meta.total;
         this.loading = false;
       }).catch((err) => {
         console.log(err);
@@ -88,9 +88,9 @@ export default {
       return this.startIndex + item;
     },
 
-    deletePermission: async function(id) {
+    deleteRole: async function(id) {
       try {
-        await this.$store.dispatch("permission/DeletePermission", id).then(() => {
+        await this.$store.dispatch("role/DeleteRole", id).then(() => {
           if (this.success_status === 200) {
             this.$swal.fire({
               toast: true,
@@ -101,7 +101,7 @@ export default {
               timer: 1500
             });
 
-            this.getAllPermissions();
+            this.getAllRoles();
           }
         })
       } catch (e) {
@@ -131,7 +131,7 @@ export default {
 
         <v-row wrap>
           <v-col cols="6">
-            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Permission</h1>
+            <h1 :class="['text-subtitle-2', 'text-grey', 'mt-5']">Role</h1>
           </v-col>
         </v-row>
 
@@ -140,12 +140,12 @@ export default {
             <v-card elevation="8">
               <v-row>
                 <v-col col="6">
-                  <v-card-title :class="['text-subtitle-1']">All Permission Lists</v-card-title>
+                  <v-card-title :class="['text-subtitle-1']">All Role Lists</v-card-title>
                 </v-col>
 
                 <v-col cols="6">
                   <v-card-actions class="justify-end">
-                    <v-btn color="success" @click="navigateWithPermission('permission-create', '/add-permission')">
+                    <v-btn color="success" @click="navigateWithPermission('role-create', '/add-role')">
                       <v-icon small left>mdi-plus</v-icon>
                       <span>Add New</span>
                     </v-btn>
@@ -157,7 +157,7 @@ export default {
 
               <v-card-text>
                 <v-card-title class="d-flex align-center pe-2" style="justify-content: space-between">
-                  <h1 :class="['text-subtitle-1', 'text-black']">Permission</h1>
+                  <h1 :class="['text-subtitle-1', 'text-black']">Role</h1>
 
                   <v-spacer></v-spacer>
 
@@ -176,10 +176,10 @@ export default {
 
                 <v-data-table-server
                     :headers="headers"
-                    :items="permissions"
+                    :items="roles"
                     :search="search"
                     v-model:options="options"
-                    :items-length="totalPermissions"
+                    :items-length="totalRoles"
                     :loading="loading"
                     item-value="name"
                     class="elevation-4"
@@ -193,11 +193,11 @@ export default {
                   <template v-slot:[`item.actions`]="{ item }">
                     <v-row align="center" justify="center">
                       <td :class="['mx-2']">
-                        <v-btn @click="navigateWithPermission('permission-edit', `/edit-permission/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
+                        <v-btn @click="navigateWithPermission('role-edit', `/edit-role/${item.id}`)" color="warning" icon="mdi-pencil" size="x-small"></v-btn>
                       </td>
 
-                      <td v-if="hasDeletePermission">
-                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deletePermission(item.id)"></v-btn>
+                      <td v-if="hasDeleteRole">
+                        <v-btn color="red" icon="mdi-delete" size="x-small" @click="deleteRole(item.id)"></v-btn>
                       </td>
                     </v-row>
                   </template>

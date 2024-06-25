@@ -4,8 +4,8 @@
 import {http} from "@/service/HttpService";
 
 const state = {
-    permissions: [],
-    permission: {},
+    roles: [],
+    role: {},
     success_message: "",
     errors: {},
     error_message: "",
@@ -17,12 +17,12 @@ const state = {
 /*                              Mutations Define                              */
 /* -------------------------------------------------------------------------- */
 const mutations = {
-    GET_ALL_PERMISSION: (state, data) => {
-        state.permissions = data;
+    GET_ALL_ROLE: (state, data) => {
+        state.roles = data;
     },
 
-    STORE_PERMISSION: (state, data) => {
-        if (state.permissions.push(data.data))
+    STORE_ROLE: (state, data) => {
+        if (state.roles.push(data.data))
         {
             state.success_message = data.data.message;
             state.success_status = data.status;
@@ -32,22 +32,22 @@ const mutations = {
         }
     },
 
-    GET_SINGLE_PERMISSION: (state, data) => {
-        state.permission = data;
+    GET_SINGLE_ROLE: (state, data) => {
+        state.role = data;
     },
 
-    UPDATE_PERMISSION: (state, data) => {
-        if (state.permissions.push(data.data))
+    UPDATE_ROLE: (state, data) => {
+        if (state.roles.push(data.data))
         {
             state.success_message = data.data.message;
             state.success_status = data.status;
         }
     },
 
-    DELETE_PERMISSION: (state, {id, data}) => {
+    DELETE_ROLE: (state, {id, data}) => {
         if (id)
         {
-            state.permissions = state.permissions.filter(item => {
+            state.roles = state.roles.filter(item => {
                 return item.id !== id;
             })
 
@@ -67,10 +67,10 @@ const mutations = {
 /* -------------------------------------------------------------------------- */
 const actions = {
     /*get all tag start*/
-    async GetAllPermission({ commit }) {
+    async GetAllRole({ commit }) {
         try {
-            const result = await http().get("v1/admin/permission/all-permission");
-            commit("GET_ALL_PERMISSION", result.data.data);
+            const result = await http().get("v1/admin/role/all-roles");
+            commit("GET_ALL_ROLE", result.data.data);
         } catch (err) {
             const errors = err.response.data.errors;
             const errorStatus = err.response.status;
@@ -81,11 +81,11 @@ const actions = {
     /*get all tag end*/
 
     /*store tag start*/
-    StorePermission: ({commit}, data) => {
+    StoreRole: ({commit}, data) => {
         return http()
-            .post("v1/admin/permission", data)
+            .post("v1/admin/role", data)
             .then((result) => {
-                commit("STORE_PERMISSION", result);
+                commit("STORE_ROLE", result);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -97,11 +97,11 @@ const actions = {
     /*store tag end*/
 
     /*get single tag start*/
-    GetSinglePermission: ({commit}, id) => {
+    GetSingleRole: ({commit}, id) => {
         return http()
-            .get(`v1/admin/permission/${id}`)
+            .get(`v1/admin/role/${id}`)
             .then((result) => {
-                commit("GET_SINGLE_PERMISSION", result.data.data);
+                commit("GET_SINGLE_ROLE", result.data.data);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -113,11 +113,11 @@ const actions = {
     /*get single tag end*/
 
     /*update tag start*/
-    UpdatePermission: ({commit}, {id, data}) => {
+    UpdateRole: ({commit}, {id, data}) => {
         return http()
-            .put(`v1/admin/permission/${id}`, data)
+            .put(`v1/admin/role/${id}`, data)
             .then((result) => {
-                commit("UPDATE_PERMISSION", result);
+                commit("UPDATE_ROLE", result);
             })
             .catch((err) => {
                 const errors = err.response.data.errors;
@@ -129,11 +129,11 @@ const actions = {
     /*update tag end*/
 
     /*destroy tag start*/
-    DeletePermission: ({commit}, id) => {
+    DeleteRole: ({commit}, id) => {
         return http()
-            .delete(`v1/admin/permission/${id}`)
+            .delete(`v1/admin/role/${id}`)
             .then((result) => {
-                commit("DELETE_PERMISSION", {id:id, data:result});
+                commit("DELETE_ROLE", {id:id, data:result});
             })
             .catch((err) => {
                 const errors = err.response.data.errors;

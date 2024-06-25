@@ -7,6 +7,7 @@ import CommonRouter from "@/router/admin/CommonRouter";
 import SubCategoryRouter from "@/router/admin/SubCategoryRouter";
 import TagRouter from "@/router/admin/TagRouter";
 import BlogRouter from "@/router/admin/BlogRouter";
+import RoleRouter from "@/router/admin/RoleRouter";
 
 export default [
     {
@@ -20,6 +21,7 @@ export default [
             },
 
             ...PermissionRouter,
+            ...RoleRouter,
             ...CategoryRouter,
             ...SubCategoryRouter,
             ...TagRouter,

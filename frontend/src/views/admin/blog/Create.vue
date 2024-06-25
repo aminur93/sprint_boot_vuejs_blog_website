@@ -82,7 +82,7 @@ export default {
 
         await this.$store.dispatch('blog/StoreBlog', formData).then(() => {
 
-          if (this.success_status === 200)
+          if (this.success_status === 201)
           {
             this.$swal.fire({
               toast: true,
