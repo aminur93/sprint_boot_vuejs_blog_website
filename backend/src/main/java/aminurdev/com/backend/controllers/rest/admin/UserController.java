@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequestMapping("/api/v1/admin/user")
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class UserController {
         List<User> users = userService.getAllUsers();
 
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                Collections.singletonList(users),
+                users,
                 "User fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -89,7 +90,7 @@ public class UserController {
             User user = userService.edit(userId);
 
             ResponseWrapper responseWrapper = new ResponseWrapper().success(
-                    Collections.singletonList(user),
+                    user,
                     "User fetch successful",
                     "true",
                     HttpStatus.OK.value()
@@ -123,7 +124,7 @@ public class UserController {
 
     @PutMapping("{id}")
     @PreAuthorize("hasAuthority('user-edit')")
-    public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer userId, @Valid @RequestBody aminurdev.com.backend.domain.request.User userRequest) {
+    public ResponseEntity<ResponseWrapper> update(@PathVariable("id") Integer userId, @RequestBody aminurdev.com.backend.domain.request.User userRequest) {
         try{
             User user = userService.update(userId, userRequest);
 

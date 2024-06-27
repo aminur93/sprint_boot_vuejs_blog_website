@@ -8,6 +8,9 @@ import SubCategoryRouter from "@/router/admin/SubCategoryRouter";
 import TagRouter from "@/router/admin/TagRouter";
 import BlogRouter from "@/router/admin/BlogRouter";
 import RoleRouter from "@/router/admin/RoleRouter";
+import UserRouter from "@/router/admin/UserRouter";
+import MenuRouter from "@/router/admin/MenuRouter";
+import MenuDropDownRouter from "@/router/admin/MenuDropDownRouter";
 
 export default [
     {
@@ -22,11 +25,14 @@ export default [
 
             ...PermissionRouter,
             ...RoleRouter,
+            ...UserRouter,
             ...CategoryRouter,
             ...SubCategoryRouter,
             ...TagRouter,
             ...BlogRouter,
-            ...CommonRouter
+            ...CommonRouter,
+            ...MenuRouter,
+            ...MenuDropDownRouter
         ],
 
         beforeEnter(to, from, next){

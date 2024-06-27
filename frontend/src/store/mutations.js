@@ -43,6 +43,10 @@ export const clearToken = (state) => {
     state.menus = [];
 };
 
+export const DASHBOARD_COUNT = (state, data) => {
+    state.dashboardCount = data;
+};
+
 export const SET_ERROR = (state, { errors, errorStatus }) => {
     state.errors = errors;
     state.error_status = errorStatus;

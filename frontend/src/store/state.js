@@ -15,6 +15,7 @@ export default {
     role: localStorage.getItem("role") || "",
     permissions: [],
     menus: [],
+    dashboardCount: [],
     success_message: '',
     errors: {},
     error_message: '',

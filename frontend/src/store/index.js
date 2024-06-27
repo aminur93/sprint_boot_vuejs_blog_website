@@ -15,6 +15,9 @@ import tag from "@/store/mosules/tag";
 import blog from "@/store/mosules/blog";
 import permission from "@/store/mosules/user_management/permission";
 import role from "@/store/mosules/user_management/role";
+import user from "@/store/mosules/user_management/user";
+import menu from "@/store/mosules/settings/menu";
+import menu_dropdown from "@/store/mosules/settings/menu_dropdown";
 //module end
 
 const store = createStore({
@@ -30,7 +33,10 @@ const store = createStore({
         tag,
         blog,
         permission,
-        role
+        role,
+        user,
+        menu,
+        menu_dropdown
     },
 
     plugins: [

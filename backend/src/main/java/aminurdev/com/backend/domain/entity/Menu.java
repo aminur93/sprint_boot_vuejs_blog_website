@@ -2,6 +2,7 @@ package aminurdev.com.backend.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -66,6 +69,8 @@ public class Menu {
     }
 
     @OneToMany(mappedBy = "menu")
+    @JsonIncludeProperties({"id","permission", "title", "icon", "route", "created_at", "updated_at"})
     @JsonManagedReference
+    @JsonBackReference
     private List<MenuDropdown> menuDropdowns;
 }

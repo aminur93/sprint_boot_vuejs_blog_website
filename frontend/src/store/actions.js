@@ -5,3 +5,9 @@ export const logout = ({commit}) => {
         commit('clearToken');
     })
 };
+
+export const dashBoardCount = ({commit}) => {
+    http().get("v1/admin/dashboard").then(result => {
+        commit('DASHBOARD_COUNT', result.data.data);
+    })
+};

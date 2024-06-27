@@ -73,7 +73,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public List<Menu> getAllMenu() {
-        return menuRepository.findAll();
+        return menuRepository.findAllWithMenuDropdowns();
     }
 
 

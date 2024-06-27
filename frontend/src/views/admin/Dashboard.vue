@@ -1,6 +1,24 @@
 <script>
+import {mapActions, mapState} from "vuex";
+
 export default {
-  name: "AdminDashboard"
+  name: "AdminDashboard",
+
+  computed: {
+    ...mapState({
+      dashboardCount: state => state.dashboardCount
+    })
+  },
+
+  mounted() {
+    this.getDashboardCount();
+  },
+
+  methods: {
+    ...mapActions({
+      getDashboardCount: "dashBoardCount"
+    })
+  }
 }
 </script>
 
@@ -21,12 +39,12 @@ export default {
                 <v-card style="background-color: #D1EFF5;">
                   <v-card-title>
                     <v-row :class="['justify-lg-space-between', 'mt-2', 'ml-2', 'mr-2']">
-                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Pending</h1>
-                      <v-icon large :class="['text-black']">mdi mdi-devices</v-icon>
+                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Blog</h1>
+                      <v-icon large :class="['text-black']">mdi mdi-post</v-icon>
                     </v-row>
                   </v-card-title>
                   <v-card-text>
-                    <h1 :class="['text-black', 'mt-2', 'ml-2']">20</h1>
+                    <h1 :class="['text-black', 'mt-2', 'ml-2']">{{dashboardCount.blog }}</h1>
 
                     <v-divider></v-divider>
 
@@ -43,12 +61,12 @@ export default {
                 <v-card style="background-color: #F0F5D1;">
                   <v-card-title>
                     <v-row :class="['justify-lg-space-between', 'mt-2', 'ml-2', 'mr-2']">
-                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Rejected</h1>
-                      <v-icon large :class="['text-black']">mdi mdi-devices</v-icon>
+                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Tag</h1>
+                      <v-icon large :class="['text-black']">mdi mdi-tag</v-icon>
                     </v-row>
                   </v-card-title>
                   <v-card-text>
-                    <h1 :class="['text-black', 'mt-2', 'ml-2']">20</h1>
+                    <h1 :class="['text-black', 'mt-2', 'ml-2']">{{dashboardCount.tag}}</h1>
 
                     <v-divider></v-divider>
 
@@ -65,12 +83,12 @@ export default {
                 <v-card style="background-color: #D1EEDB;">
                   <v-card-title>
                     <v-row :class="['justify-lg-space-between', 'mt-2', 'ml-2', 'mr-2']">
-                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Review</h1>
-                      <v-icon large :class="['text-black']">mdi mdi-devices</v-icon>
+                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Category</h1>
+                      <v-icon large :class="['text-black']">mdi mdi-view-list</v-icon>
                     </v-row>
                   </v-card-title>
                   <v-card-text>
-                    <h1 :class="['text-black', 'mt-2', 'ml-2']">20</h1>
+                    <h1 :class="['text-black', 'mt-2', 'ml-2']">{{dashboardCount.category}}</h1>
 
                     <v-divider></v-divider>
 
@@ -87,12 +105,12 @@ export default {
                 <v-card style="background-color: #f9df89;">
                   <v-card-title>
                     <v-row :class="['justify-lg-space-between', 'mt-2', 'ml-2', 'mr-2']">
-                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Approved</h1>
-                      <v-icon large :class="['text-black']">mdi mdi-devices</v-icon>
+                      <h1 :class="['text-subtitle-1', 'text-black', 'font-weight-bold']">Total Users</h1>
+                      <v-icon large :class="['text-black']">mdi mdi-account-group</v-icon>
                     </v-row>
                   </v-card-title>
                   <v-card-text>
-                    <h1 :class="['text-black', 'mt-2', 'ml-2']">20</h1>
+                    <h1 :class="['text-black', 'mt-2', 'ml-2']">{{dashboardCount.user}}</h1>
 
                     <v-divider></v-divider>
 

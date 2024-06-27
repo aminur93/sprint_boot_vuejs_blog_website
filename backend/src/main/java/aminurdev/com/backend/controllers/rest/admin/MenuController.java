@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequestMapping("/api/v1/admin/menu")
 @RequiredArgsConstructor
@@ -59,13 +60,17 @@ public class MenuController {
 
             Menu menu = menuService.store(menuRequest);
 
-            return ResponseEntity.ok(new ResponseWrapper().success(
+              ResponseWrapper responseWrapper= new ResponseWrapper().success(
                     Collections.singletonList(menu),
                     "Menu store successful",
                     "true",
                     HttpStatus.CREATED.value()
-            ));
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
+
         }catch (Exception exception){
+
             return ResponseEntity.ok(new ResponseWrapper().error(
                     Collections.singletonList(exception.getMessage()),
                     "Failed",
@@ -84,7 +89,7 @@ public class MenuController {
             Menu menu = menuService.edit(menuId);
 
             return ResponseEntity.ok(new ResponseWrapper().success(
-                    Collections.singletonList(menu),
+                    menu,
                     "Menu fetch successful",
                     "true",
                     HttpStatus.OK.value()

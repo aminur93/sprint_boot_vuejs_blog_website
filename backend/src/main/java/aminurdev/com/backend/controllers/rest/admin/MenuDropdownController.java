@@ -13,9 +13,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequestMapping("/api/v1/admin/menu-dropdown")
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class MenuDropdownController {
         List<MenuDropdown> menuDropdowns = menuDropdownService.getAllDropdowns();
 
         return ResponseEntity.ok(new ResponseWrapper().success(
-                Collections.singletonList(menuDropdowns),
+                menuDropdowns,
                 "Menu dropdown fetch successful",
                 "true",
                 HttpStatus.OK.value()
@@ -59,12 +59,14 @@ public class MenuDropdownController {
 
             MenuDropdown menuDropdown = menuDropdownService.store(menuDropdownRequest);
 
-            return ResponseEntity.ok(new ResponseWrapper().success(
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
                     Collections.singletonList(menuDropdown),
                     "Menu dropdown store successful",
                     "true",
                     HttpStatus.CREATED.value()
-            ));
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
 
         }catch (Exception exception){
             return ResponseEntity.ok(new ResponseWrapper().error(
@@ -85,7 +87,7 @@ public class MenuDropdownController {
             MenuDropdown menuDropdown = menuDropdownService.edit(menuDropdownId);
 
             return ResponseEntity.ok(new ResponseWrapper().success(
-                    Collections.singletonList(menuDropdown),
+                    menuDropdown,
                     "Menu dropdown fetch successful",
                     "true",
                     HttpStatus.OK.value()

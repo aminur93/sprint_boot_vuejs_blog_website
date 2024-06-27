@@ -77,10 +77,7 @@ public class MenuDropdownServiceImpl implements MenuDropdownService {
 
     @Override
     public List<MenuDropdown> getAllDropdowns() {
-
-        List<MenuDropdown> menuDropdowns = menuDropdownRepository.findAll();
-
-        return menuDropdowns;
+        return menuDropdownRepository.findAll();
     }
 
     @Override
