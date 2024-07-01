@@ -857,7 +857,7 @@ footer .wrapper { text-align: center; }
     transform: translateY(-50%);
     width: 100%;
     height: 200px;
-    background: url(../images/pattern.png);
+    background: url(../img/pattern.png);
     background-size: contain;
     opacity: 0.2;
   }
