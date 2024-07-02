@@ -53,6 +53,7 @@ public class Blog {
     @Column(name = "slug", nullable = true)
     private String slug;
 
+    @Lob
     @Column(name = "description", nullable = true)
     private String description;
 

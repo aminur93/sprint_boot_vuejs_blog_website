@@ -1,6 +1,6 @@
-import Blog from "@/views/blog/Blog.vue";
-import Master from "@/views/blog/Master.vue";
-import BlogDetails from "@/views/blog/BlogDetails.vue";
+import Blog from "@/views/front/Blog.vue";
+import Master from "@/views/front/Master.vue";
+import BlogDetails from "@/views/front/BlogDetails.vue";
 
 export default [
     {
@@ -9,7 +9,7 @@ export default [
         children: [
             {
                 path: '',
-                name: 'Blog',
+                name: 'FrontBlog',
                 component: Blog
             },
 

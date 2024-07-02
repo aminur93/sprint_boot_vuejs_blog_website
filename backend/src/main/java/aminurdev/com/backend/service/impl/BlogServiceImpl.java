@@ -43,7 +43,7 @@ public class BlogServiceImpl implements BlogService {
 
     private final TagRepository tagRepository;
 
-    private static final String  RESOURCE_DIRECTORY = "./src/main/resources/static/images/";
+    private static final String  RESOURCE_DIRECTORY = "./images/";
 
     @Override
     public PaginationResponse<Blog> index(Sort.Direction direction, int page, int perPage) {

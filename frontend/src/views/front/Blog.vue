@@ -1,5 +1,6 @@
 <script>
 import axios from "axios";
+import {http} from "@/service/HttpService";
 
 export default {
   name: "FrontBlog",
@@ -10,6 +11,10 @@ export default {
       currentPage: 1,
       lastPage: 1,
       loading: false,
+
+      categories: [],
+      subCategories: [],
+      tags: []
     }
   },
 
@@ -19,7 +24,14 @@ export default {
     }
   },
 
+  mounted() {
+    this.getAllCategories();
+    this.getAllSubCategories();
+    this.getAllTags();
+  },
+
   methods: {
+
     async loadMore() {
       if (this.loading || !this.hasMore) return;
       this.loading = true;
@@ -27,7 +39,7 @@ export default {
         const response = await axios.get('http://localhost:8080/api/v1/public/blog', {
           params: {
             page: this.currentPage,
-            perPage: 1
+            perPage: 10
           }
         });
         const data = response.data;
@@ -38,6 +50,48 @@ export default {
         console.error('Failed to load more blogs:', error);
       } finally {
         this.loading = false;
+      }
+    },
+
+    getImageSrc(image) {
+      const src = `${this.$store.state.serverPath}/images/${image}`;
+      return src;
+    },
+
+    formattedTime(dateString) {
+      if (!dateString) return '';
+      const dateObj = new Date(dateString);
+      if (isNaN(dateObj.getTime())) return '';
+      return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    },
+
+    getAllCategories: async function(){
+      try {
+        await http().get('http://localhost:8080/api/v1/public/category').then(res => {
+          this.categories = res.data.data;
+        })
+      }catch (e) {
+        console.error('Failed to load more categories:', e);
+      }
+    },
+
+    getAllSubCategories: async function(){
+      try {
+        await http().get('http://localhost:8080/api/v1/public/sub-category').then(res => {
+          this.subCategories = res.data.data;
+        })
+      }catch (e) {
+        console.error('Failed to load more sub-categories:', e);
+      }
+    },
+
+    getAllTags: async function(){
+      try {
+        await http().get('http://localhost:8080/api/v1/public/tag').then(res => {
+          this.tags = res.data.data;
+        })
+      }catch (e) {
+        console.error('Failed to load more tags:', e);
       }
     }
   },
@@ -56,9 +110,6 @@ export default {
 
           <div class="container">
 
-            <!--
-              - BLOG SECTION
-            -->
 
             <div class="blog">
 
@@ -69,42 +120,38 @@ export default {
                 <div class="blog-card" v-for="blog in blogs" :key="blog.id">
 
                   <div class="blog-card-banner">
-                    <img :src="require('@/assets/img/blog-1.png')" alt="Building microservices with Dropwizard, MongoDB & Docker"
+                    <img :src="getImageSrc(blog.image)" alt="Building microservices with Dropwizard, MongoDB & Docker"
                          width="250" class="blog-banner-img">
                   </div>
 
                   <div class="blog-content-wrapper">
 
-                    <button class="blog-topic text-tiny">Database</button>
+                    <button class="blog-topic text-tiny">{{blog.category.name}}</button>
 
                     <h3>
                       <a href="#" class="h3">
-                        Building microservices with Dropwizard, MongoDB & Docker
+                        {{ blog.title }}
                       </a>
                     </h3>
 
                     <p class="blog-text">
-                      This NoSQL database oriented to documents (by documents like JSON) combines some of the features from
-                      relational
-                      databases, easy to use and the multi-platform is the best option for scale up and have fault
-                      tolerance, load balancing,
-                      map reduce, etc.
+                      {{blog.description}}
                     </p>
 
                     <div class="wrapper-flex">
 
                       <div class="profile-wrapper">
-                        <img :src="require('@/assets/img/author.png')" alt="Julia Walker" width="50">
+                        <img :src="require('@/assets/img/author-1.png')" alt="Julia Walker" width="50">
                       </div>
 
                       <div class="wrapper">
-                        <a href="#" class="h4">Julia Walker</a>
+                        <a href="#" class="h4">{{ blog.author}}</a>
 
                         <p class="text-sm">
-                          <time datetime="2022-01-17">Jan 17, 2022</time>
+                          <time datetime="2022-01-17">{{ blog.date }}</time>
                           <span class="separator"></span>
                           <ion-icon name="time-outline"></ion-icon>
-                          <time datetime="PT3M">3 min</time>
+                          <time>{{ this.formattedTime(blog.createdAt) }}</time>
                         </p>
                       </div>
 
@@ -125,30 +172,27 @@ export default {
 
               <div class="topics">
 
-                <h2 class="h2">Topics</h2>
+                <h2 class="h2">Categories</h2>
 
-                <a href="#" class="topic-btn">
+                <a href="#" class="topic-btn" v-for="category in categories" :key="category.id">
                   <div class="icon-box">
-                    <ion-icon name="server-outline"></ion-icon>
+                    <ion-icon name="arrow-forward-outline"></ion-icon>
                   </div>
 
-                  <p>Database</p>
+                  <p>{{ category.name }}</p>
                 </a>
+              </div>
 
-                <a href="#" class="topic-btn">
+              <div class="topics">
+
+                <h2 class="h2">Sub-Categories</h2>
+
+                <a href="#" class="topic-btn" v-for="subCategory in subCategories" :key="subCategory.id">
                   <div class="icon-box">
-                    <ion-icon name="accessibility-outline"></ion-icon>
+                    <ion-icon name="arrow-forward-outline"></ion-icon>
                   </div>
 
-                  <p>Accessibility</p>
-                </a>
-
-                <a href="#" class="topic-btn">
-                  <div class="icon-box">
-                    <ion-icon name="rocket-outline"></ion-icon>
-                  </div>
-
-                  <p>Web Performance</p>
+                  <p>{{ subCategory.name }}</p>
                 </a>
 
               </div>
@@ -158,16 +202,7 @@ export default {
                 <h2 class="h2">Tags</h2>
 
                 <div class="wrapper">
-
-                  <button class="hashtag">#mongodb</button>
-                  <button class="hashtag">#nodejs</button>
-                  <button class="hashtag">#a11y</button>
-                  <button class="hashtag">#mobility</button>
-                  <button class="hashtag">#inclusion</button>
-                  <button class="hashtag">#webperf</button>
-                  <button class="hashtag">#optimize</button>
-                  <button class="hashtag">#performance</button>
-
+                  <button class="hashtag" v-for="tag in tags" :key="tag.id">#{{tag.name}}</button>
                 </div>
 
               </div>

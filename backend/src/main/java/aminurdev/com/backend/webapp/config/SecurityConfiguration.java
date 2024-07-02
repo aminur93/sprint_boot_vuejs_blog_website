@@ -45,9 +45,9 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/public/**").permitAll()
-                        .requestMatchers("/static/**", "/images/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/public/**", "/images/**").permitAll()
                         .anyRequest().authenticated())
+
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(
@@ -80,7 +80,8 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    private AuthenticationEntryPoint authenticationEntryPoint(){
+    @Bean("authenticationEntryPoint")
+    public AuthenticationEntryPoint authenticationEntryPoint(){
         return new AuthenticationEntryPoint() {
             @Override
             public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {

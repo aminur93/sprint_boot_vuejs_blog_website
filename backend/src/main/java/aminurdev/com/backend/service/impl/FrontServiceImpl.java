@@ -1,8 +1,14 @@
 package aminurdev.com.backend.service.impl;
 
 import aminurdev.com.backend.domain.entity.Blog;
+import aminurdev.com.backend.domain.entity.Category;
+import aminurdev.com.backend.domain.entity.SubCategory;
+import aminurdev.com.backend.domain.entity.Tag;
 import aminurdev.com.backend.domain.exception.ResourceNotFoundException;
 import aminurdev.com.backend.domain.repository.BlogRepository;
+import aminurdev.com.backend.domain.repository.CategoryRepository;
+import aminurdev.com.backend.domain.repository.SubCategoryRepository;
+import aminurdev.com.backend.domain.repository.TagRepository;
 import aminurdev.com.backend.response.pagination.Links;
 import aminurdev.com.backend.response.pagination.Meta;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
@@ -22,6 +28,12 @@ import java.util.List;
 public class FrontServiceImpl implements FrontService {
 
     private final BlogRepository blogRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    private final SubCategoryRepository subCategoryRepository;
+
+    private final TagRepository tagRepository;
 
     @Override
     public PaginationResponse<Blog> getBlogs(Sort.Direction direction, int page, int perPage) {
@@ -72,5 +84,23 @@ public class FrontServiceImpl implements FrontService {
         Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Blog is not found" + blogId));
 
         return blog;
+    }
+
+    @Override
+    public List<Category> getAllCategories() {
+
+        return categoryRepository.findAll();
+    }
+
+    @Override
+    public List<SubCategory> getAllSubCategories() {
+
+        return subCategoryRepository.findAll();
+    }
+
+    @Override
+    public List<Tag> getAllTags() {
+
+        return tagRepository.findAll();
     }
 }
