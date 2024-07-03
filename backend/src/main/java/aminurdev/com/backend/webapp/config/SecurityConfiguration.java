@@ -74,7 +74,6 @@ public class SecurityConfiguration {
                     // Set response content type and write the response body
                     response.setContentType("application/json");
                     response.getWriter().write(responseBody);
-
                 });
 
         return http.build();
@@ -85,6 +84,9 @@ public class SecurityConfiguration {
         return new AuthenticationEntryPoint() {
             @Override
             public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                // Log the unauthorized access attempt
+                System.out.println("Unauthorized access attempt: " + request.getRequestURI());
+
                 response.setContentType("application/json");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().println("{ \"status\": \""+ HttpStatus.UNAUTHORIZED.value()+"\", \"error\": \"Unauthorized\", \"message\": \"" + authException.getMessage() + "\" }");

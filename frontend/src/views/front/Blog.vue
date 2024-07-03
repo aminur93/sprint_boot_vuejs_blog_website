@@ -14,7 +14,13 @@ export default {
 
       categories: [],
       subCategories: [],
-      tags: []
+      tags: [],
+
+      add_news_letter: {
+        email: ''
+      },
+
+      errors: {}
     }
   },
 
@@ -93,6 +99,34 @@ export default {
       }catch (e) {
         console.error('Failed to load more tags:', e);
       }
+    },
+
+    newsLetter: async function(){
+      try {
+
+        let formData = new FormData();
+
+        formData.append('email', this.add_news_letter.email);
+
+        await http().post('http://localhost:8080/api/v1/public/news-letter', formData).then(res => {
+
+            if (res.data.status === 201)
+            {
+              this.$swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: res.data.message,
+                showConfirmButton: false,
+                timer: 1500
+              });
+
+              this.add_news_letter = {};
+            }
+        })
+      }catch (e) {
+        console.error(e);
+      }
     }
   },
 
@@ -129,9 +163,9 @@ export default {
                     <button class="blog-topic text-tiny">{{blog.category.name}}</button>
 
                     <h3>
-                      <a href="#" class="h3">
+                      <router-link :to="`/blog-details/${blog.id}`" class="h3">
                         {{ blog.title }}
-                      </a>
+                      </router-link>
                     </h3>
 
                     <p class="blog-text">
@@ -174,13 +208,13 @@ export default {
 
                 <h2 class="h2">Categories</h2>
 
-                <a href="#" class="topic-btn" v-for="category in categories" :key="category.id">
+                <router-link :to="`/category-blog/${category.id}`" class="topic-btn" v-for="category in categories" :key="category.id">
                   <div class="icon-box">
                     <ion-icon name="arrow-forward-outline"></ion-icon>
                   </div>
 
                   <p>{{ category.name }}</p>
-                </a>
+                </router-link>
               </div>
 
               <div class="topics">
@@ -254,8 +288,8 @@ export default {
                     Subscribe to our newsletter to be among the first to keep up with the latest updates.
                   </p>
 
-                  <form action="#">
-                    <input type="email" name="email" placeholder="Email Address" required>
+                  <form v-on:submit.prevent="newsLetter">
+                    <input type="email" v-model="add_news_letter.email" name="email" placeholder="Email Address" required>
 
                     <button type="submit" class="btn btn-primary">Subscribe</button>
                   </form>

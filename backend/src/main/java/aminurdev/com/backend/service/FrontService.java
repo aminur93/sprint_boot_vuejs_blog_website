@@ -1,9 +1,6 @@
 package aminurdev.com.backend.service;
 
-import aminurdev.com.backend.domain.entity.Blog;
-import aminurdev.com.backend.domain.entity.Category;
-import aminurdev.com.backend.domain.entity.SubCategory;
-import aminurdev.com.backend.domain.entity.Tag;
+import aminurdev.com.backend.domain.entity.*;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
 import org.springframework.data.domain.Sort;
 
@@ -17,7 +14,13 @@ public interface FrontService {
 
     List<Category> getAllCategories();
 
+    Category getCategory(Integer categoryId);
+
     List<SubCategory> getAllSubCategories();
 
     List<Tag> getAllTags();
+
+    NewsLetter StoreNewsLetter(aminurdev.com.backend.domain.request.NewsLetter newsLetterRequest);
+
+    PaginationResponse<Blog> getCategoryBlogs(Category category, Sort.Direction direction, int page, int perPage);
 }

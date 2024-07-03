@@ -1,6 +1,45 @@
 <script>
+import {http} from "@/service/HttpService";
+
 export default {
-  name: "BlogDetails"
+  name: "BlogDetails",
+
+  data(){
+    return{
+      blog: {}
+    }
+  },
+
+  mounted() {
+    this.getSingleBlog( this.$route.params.id);
+  },
+
+  methods: {
+    getSingleBlog: async function(){
+      try {
+        let id = this.$route.params.id;
+
+        await http().get(`http://localhost:8080/api/v1/public/blog-details/${id}`).then(res => {
+
+          this.blog = res.data.data;
+        })
+      }catch (e) {
+        console.error(e);
+      }
+    },
+
+    getImageSrc(image) {
+      const src = `${this.$store.state.serverPath}/images/${image}`;
+      return src;
+    },
+
+    formattedTime(dateString) {
+      if (!dateString) return '';
+      const dateObj = new Date(dateString);
+      if (isNaN(dateObj.getTime())) return '';
+      return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    },
+  }
 }
 </script>
 
@@ -12,84 +51,50 @@ export default {
 
           <div class="blog-details-card">
             <div class="blog-image">
-              <img :src="require('@/assets/img/blog-1.png')" alt="Building microservices with Dropwizard, MongoDB & Docker"
-                   class="blog-banner-img">
+              <img :src="getImageSrc(blog.image)" alt="blog image" class="blog-banner-img">
             </div>
 
-            <h1 class="blog-title">Building microservices with Dropwizard, MongoDB & Docker</h1>
+            <h1 class="blog-title">{{blog.title}}</h1>
 
-            <h2 class="blog-subtitle">A Comprehensive Guide</h2>
+            <h2 class="blog-subtitle">{{blog.slogan}}</h2>
 
             <div class="blog-description">
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard
-                dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen
-                book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more
-                recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-              </p>
-
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-                standard
-                dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type
-                specimen
-                book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and
-                more
-                recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-              </p>
-
-              <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's
-                standard
-                dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type
-                specimen
-                book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and
-                more
-                recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                {{blog.description}}
               </p>
             </div>
 
             <div class="wrapper-flex">
               <div class="profile-wrapper">
-                <img :src="require('@/assets/img/author.png')" alt="Julia Walker" width="50">
+                <img :src="require('@/assets/img/author-1.png')" alt="Julia Walker" width="50">
               </div>
 
               <div class="wrapper">
-                <a href="#" class="h4">Julia Walker</a>
+                <a href="#" class="h4">{{blog.author}}</a>
 
                 <p class="text-sm">
-                  <time datetime="2022-01-17">Jan 17, 2022</time>
+                  <time datetime="2022-01-17">{{blog.date}}</time>
                   <span class="separator"></span>
                   <ion-icon name="time-outline" role="img" class="md hydrated" aria-label="time outline"></ion-icon>
-                  <time datetime="PT3M">3 min</time>
+                  <time>{{ this.formattedTime(blog.createdAt) }}</time>
                 </p>
               </div>
 
               <div class="blog_category">
                 <h5 class="h5" style="margin-left: 5px;">Category : </h5>
-                <button class="hashtag">Database</button>
+                <button class="hashtag" v-if="blog.category">{{blog.category.name}}</button>
               </div>
 
               <div class="blog_category">
                 <h5 class="h5" style="margin-left: 5px;">Sub-Category : </h5>
-                <button class="hashtag">NoSql</button>
+                <button class="hashtag" v-if="blog.subCategory">{{blog.subCategory.name}}</button>
               </div>
             </div>
 
             <div class="tags">
               <h5 class="h5">Tags</h5>
               <div class="wrapper">
-                <button class="hashtag">#mongodb</button>
-                <button class="hashtag">#nodejs</button>
-                <button class="hashtag">#a11y</button>
-                <button class="hashtag">#mobility</button>
-                <button class="hashtag">#inclusion</button>
-                <button class="hashtag">#webperf</button>
-                <button class="hashtag">#optimize</button>
-                <button class="hashtag">#performance</button>
+                <button class="hashtag" v-for="tag in blog.tags" :key="tag.id">#{{tag.name}}</button>
               </div>
             </div>
 

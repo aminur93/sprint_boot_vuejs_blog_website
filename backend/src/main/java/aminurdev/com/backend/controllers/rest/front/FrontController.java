@@ -4,20 +4,21 @@ import aminurdev.com.backend.domain.entity.Blog;
 import aminurdev.com.backend.domain.entity.Category;
 import aminurdev.com.backend.domain.entity.SubCategory;
 import aminurdev.com.backend.domain.entity.Tag;
+import aminurdev.com.backend.domain.request.NewsLetter;
 import aminurdev.com.backend.response.ResponseWrapper;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
 import aminurdev.com.backend.service.FrontService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
+@CrossOrigin(origins = "*", maxAge = 6000)
 @RestController
 @RequiredArgsConstructor
 public class FrontController {
@@ -68,6 +69,23 @@ public class FrontController {
         return ResponseEntity.ok(responseWrapper);
     }
 
+    @GetMapping("/api/v1/public/single-category/{id}")
+    public ResponseEntity<ResponseWrapper> getCategory(@PathVariable("id") Integer categoryId)
+    {
+        Category category = frontService.getCategory(categoryId);
+
+        ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                category,
+                "Category fetch successful",
+                "true",
+                HttpStatus.OK.value()
+        );
+
+        return ResponseEntity.ok(responseWrapper);
+    }
+
+
+
     @GetMapping("/api/v1/public/sub-category")
     public ResponseEntity<ResponseWrapper> getAllSubCategories()
     {
@@ -96,5 +114,49 @@ public class FrontController {
         );
 
         return ResponseEntity.ok(responseWrapper);
+    }
+
+    @PostMapping("/api/v1/public/news-letter")
+    public ResponseEntity<ResponseWrapper> storeNewsLetter(@Valid @RequestBody NewsLetter newsLetterRequest)
+    {
+        try{
+
+            aminurdev.com.backend.domain.entity.NewsLetter newsLetter = frontService.StoreNewsLetter(newsLetterRequest);
+
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                    Collections.singletonList(newsLetter),
+                    "News letter created successfully",
+                    "true",
+                    HttpStatus.CREATED.value()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
+
+        }catch (Exception exception){
+            ResponseWrapper responseWrapper = new ResponseWrapper().error(
+                    Collections.singletonList(exception.getMessage()),
+                    "Error while creating news letter",
+                    "false",
+                    HttpStatus.BAD_REQUEST.value()
+            );
+
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
+    }
+
+    @GetMapping("/api/v1/public/category-blog/{categoryId}")
+    public ResponseEntity<PaginationResponse<Blog>> getCategoryBlogs(
+            @PathVariable("categoryId") Category categoryId,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int perPage
+    )
+    {
+
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+
+        PaginationResponse<Blog> paginationResponse = frontService.getCategoryBlogs(categoryId, direction, page, perPage);
+
+        return ResponseEntity.ok(paginationResponse);
     }
 }

@@ -12,10 +12,10 @@ export default {
 
         <nav class="navbar">
 
-          <a href="#">
+          <router-link to="/">
             <img :src="require('@/assets/img/logo-light.svg')" alt="Devblog's logo" width="150" class="logo-light">
             <img :src="require('@/assets/img/logo-dark.svg')" alt="Devblog's logo" width="150" class="logo-dark">
-          </a>
+          </router-link>
 
           <div class="btn-group">
 
@@ -30,15 +30,15 @@ export default {
             <ul class="desktop-nav">
 
               <li>
-                <a href="#" class="nav-link">Home</a>
+                <router-link to="/" class="nav-link">Home</router-link>
               </li>
 
               <li>
-                <a href="#" class="nav-link">About Me</a>
+                <router-link to="/about" class="nav-link">About Me</router-link>
               </li>
 
               <li>
-                <a href="#" class="nav-link">Contact</a>
+                <router-link to="/contact-us" class="nav-link">Contact</router-link>
               </li>
 
             </ul>
@@ -56,15 +56,15 @@ export default {
 
               <ul>
                 <li class="nav-item">
-                  <a href="#" class="nav-link">Home</a>
+                  <router-link to="/" class="nav-link">Home</router-link>
                 </li>
 
                 <li class="nav-item">
-                  <a href="#" class="nav-link">About Me</a>
+                  <router-link to="/about" class="nav-link">About Me</router-link>
                 </li>
 
                 <li class="nav-item">
-                  <a href="#" class="nav-link">Contact</a>
+                  <router-link to="/contact-us" class="nav-link">Contact</router-link>
                 </li>
               </ul>
 
