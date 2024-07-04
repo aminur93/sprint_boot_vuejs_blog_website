@@ -103,7 +103,7 @@ export default {
 
               <div class="comment-card">
                 <div class="comment-author">
-                  <img :src="require('@/assets/img/author.png')" alt="John Doe">
+                  <img :src="require('@/assets/img/comment.png')" alt="John Doe">
                   <p><strong>John Doe</strong></p>
                 </div>
                 <div class="comment-content">
@@ -117,7 +117,7 @@ export default {
 
               <div class="comment-card">
                 <div class="comment-author">
-                  <img :src="require('@/assets/img/author.png')" alt="Jane Smith">
+                  <img :src="require('@/assets/img/comment.png')" alt="Jane Smith">
                   <p><strong>Jane Smith</strong></p>
                 </div>
                 <div class="comment-content">
@@ -126,7 +126,7 @@ export default {
 
                 <div class="reply-card">
                   <div class="reply-author">
-                    <img :src="require('@/assets/img/author.png')" alt="Julia Walker">
+                    <img :src="require('@/assets/img/comment.png')" alt="Julia Walker">
                     <p><strong>Julia Walker</strong></p>
                   </div>
                   <div class="reply-content">

@@ -1,9 +1,6 @@
 package aminurdev.com.backend.controllers.rest.front;
 
-import aminurdev.com.backend.domain.entity.Blog;
-import aminurdev.com.backend.domain.entity.Category;
-import aminurdev.com.backend.domain.entity.SubCategory;
-import aminurdev.com.backend.domain.entity.Tag;
+import aminurdev.com.backend.domain.entity.*;
 import aminurdev.com.backend.domain.request.NewsLetter;
 import aminurdev.com.backend.response.ResponseWrapper;
 import aminurdev.com.backend.response.pagination.PaginationResponse;
@@ -101,6 +98,20 @@ public class FrontController {
         return ResponseEntity.ok(responseWrapper);
     }
 
+    @GetMapping("/api/v1/public/sub-category/{id}")
+    public ResponseEntity<ResponseWrapper> getSubCategory(@PathVariable("id") Integer subCategoryId) {
+        SubCategory subCategory = frontService.getSubCategory(subCategoryId);
+
+        ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                subCategory,
+                "Sub category fetch successful",
+                "true",
+                HttpStatus.OK.value()
+        );
+
+        return ResponseEntity.ok(responseWrapper);
+    }
+
     @GetMapping("/api/v1/public/tag")
     public ResponseEntity<ResponseWrapper> getAllTags()
     {
@@ -109,6 +120,21 @@ public class FrontController {
         ResponseWrapper responseWrapper = new ResponseWrapper().success(
                 tags,
                 "All tags fetch successful",
+                "true",
+                HttpStatus.OK.value()
+        );
+
+        return ResponseEntity.ok(responseWrapper);
+    }
+
+    @GetMapping("/api/v1/public/tag/{id}")
+    public ResponseEntity<ResponseWrapper> getTag(@PathVariable("id") Integer tagId)
+    {
+        Tag tag = frontService.getTag(tagId);
+
+        ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                tag,
+                "Tag fetch successful",
                 "true",
                 HttpStatus.OK.value()
         );
@@ -158,5 +184,65 @@ public class FrontController {
         PaginationResponse<Blog> paginationResponse = frontService.getCategoryBlogs(categoryId, direction, page, perPage);
 
         return ResponseEntity.ok(paginationResponse);
+    }
+
+    @GetMapping("/api/v1/public/sub-category-blog/{subCategoryId}")
+    public ResponseEntity<PaginationResponse<Blog>> getSubCategoryBlogs(
+            @PathVariable("subCategoryId") SubCategory subCategoryId,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int perPage
+    )
+    {
+
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+
+        PaginationResponse<Blog> paginationResponse = frontService.getSubCategoryBlogs(subCategoryId, direction, page, perPage);
+
+        return ResponseEntity.ok(paginationResponse);
+    }
+
+    @GetMapping("/api/v1/public/tag-blog/{tagId}")
+    public ResponseEntity<PaginationResponse<Blog>> getBlogsByTag(
+            @PathVariable("tagId") Tag tagId,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int perPage
+    )
+    {
+
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+
+        PaginationResponse<Blog> paginationResponse = frontService.getBlogsByTag(tagId, direction, page, perPage);
+
+        return ResponseEntity.ok(paginationResponse);
+    }
+
+    @PostMapping("/api/v1/public/contact-us")
+    public ResponseEntity<ResponseWrapper> storeContactUs(@Valid @RequestBody aminurdev.com.backend.domain.request.ContactUs contactUsRequest)
+    {
+        try{
+
+            ContactUs contactUs = frontService.storeContactUs(contactUsRequest);
+
+            ResponseWrapper responseWrapper = new ResponseWrapper().success(
+                    Collections.singletonList(contactUs),
+                    "Contact us created successfully",
+                    "true",
+                    HttpStatus.CREATED.value()
+            );
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseWrapper);
+
+        }catch (Exception exception){
+            ResponseWrapper responseWrapper = new ResponseWrapper().error(
+                    Collections.singletonList(exception.getMessage()),
+                    "Error while creating news letter",
+                    "false",
+                    HttpStatus.BAD_REQUEST.value()
+            );
+
+            return ResponseEntity.badRequest().body(responseWrapper);
+        }
     }
 }

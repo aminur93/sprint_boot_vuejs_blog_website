@@ -22,13 +22,17 @@ export default {
     }
   },
 
+  mounted() {
+    this.getSingleSubCategory(this.$route.params.id);
+  },
+
   methods: {
     async loadMore() {
       if (this.loading || !this.hasMore) return;
       this.loading = true;
       try {
         let id = this.$route.params.id;
-        const response = await axios.get(`http://localhost:8080/api/v1/public/category-blog/${id}`, {
+        const response = await axios.get(`http://localhost:8080/api/v1/public/sub-category-blog/${id}`, {
           params: {
             page: this.currentPage,
             perPage: 10
@@ -57,10 +61,11 @@ export default {
       return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     },
 
-    getAllSubCategories: async function(){
+    getSingleSubCategory: async function(){
       try {
-        await http().get('http://localhost:8080/api/v1/public/sub-category').then(res => {
-          this.subCategories = res.data.data;
+        let id = this.$route.params.id;
+        await http().get(`http://localhost:8080/api/v1/public/sub-category/${id}`).then(res => {
+          this.subCategory = res.data.data;
         })
       }catch (e) {
         console.error('Failed to load more sub-categories:', e);
@@ -80,7 +85,7 @@ export default {
       <div class="category_blog_container">
 
         <div class="blog" v-if="blogs.length > 0">
-          <h2 class="h2">Latest Blog By {{category.name}}</h2>
+          <h2 class="h2">Latest Blog By {{subCategory.name}}</h2>
           <div class="blog-card-group">
             <div class="category_blog_card" v-for="blog in blogs" :key="blog.id">
               <div class="blog-card-banner">

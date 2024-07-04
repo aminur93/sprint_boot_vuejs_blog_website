@@ -32,6 +32,8 @@ public class FrontServiceImpl implements FrontService {
 
     private final NewsLetterRepository newsLetterRepository;
 
+    private final ContactUsRepository contactUsRepository;
+
     @Override
     public PaginationResponse<Blog> getBlogs(Sort.Direction direction, int page, int perPage) {
 
@@ -101,9 +103,19 @@ public class FrontServiceImpl implements FrontService {
     }
 
     @Override
+    public SubCategory getSubCategory(Integer subCategoryId) {
+        return subCategoryRepository.findById(subCategoryId).orElseThrow(() -> new ResourceNotFoundException("SubCategory is not found" + subCategoryId));
+    }
+
+    @Override
     public List<Tag> getAllTags() {
 
         return tagRepository.findAll();
+    }
+
+    @Override
+    public Tag getTag(Integer tagId) {
+        return tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag is not found" + tagId));
     }
 
     @Override
@@ -166,5 +178,112 @@ public class FrontServiceImpl implements FrontService {
         response.setLinks(links);
 
         return response;
+    }
+
+    @Override
+    public PaginationResponse<Blog> getSubCategoryBlogs(SubCategory subCategory, Sort.Direction direction, int page, int perPage) {
+
+        Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by(direction,"id"));
+
+        Page<Blog> blogPage = blogRepository.findBySubCategory(subCategory,pageable);
+
+        List<Blog> blogs = blogPage.getContent();
+
+        PaginationResponse<Blog> response = new PaginationResponse<>();
+
+        response.setData(blogs);
+        response.setSuccess(true);
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("All blogs fetch successful");
+
+        Meta meta = new Meta();
+
+        meta.setCurrentPage(blogPage.getNumber() + 1);
+        meta.setFrom(blogPage.getNumber() * blogPage.getSize() + 1);
+        meta.setLastPage(blogPage.getTotalPages());
+        meta.setPath("http://localhost:8080/api/v1/public" +"/blog");
+        meta.setPerPage(blogPage.getSize());
+        meta.setTo((int) blogPage.getTotalElements());
+        meta.setTotal((int) blogPage.getTotalElements());
+        response.setMeta(meta);
+
+        Links links = new Links();
+
+        links.setFirst("http://localhost:8080/api/v1/public" +"/blog?page=1");
+        links.setLast("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.getTotalPages());
+        if (blogPage.hasPrevious()) {
+            links.setPrev("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.previousPageable().getPageNumber());
+        }
+        if (blogPage.hasNext()) {
+            links.setNext("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.nextPageable().getPageNumber());
+        }
+
+        response.setLinks(links);
+
+        return response;
+    }
+
+    @Override
+    public PaginationResponse<Blog> getBlogsByTag(Tag tag, Sort.Direction direction, int page, int perPage) {
+
+        Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by(direction,"id"));
+
+        Page<Blog> blogPage = blogRepository.findByTags(tag,pageable);
+
+        List<Blog> blogs = blogPage.getContent();
+
+        PaginationResponse<Blog> response = new PaginationResponse<>();
+
+        response.setData(blogs);
+        response.setSuccess(true);
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("All blogs fetch successful");
+
+        Meta meta = new Meta();
+
+        meta.setCurrentPage(blogPage.getNumber() + 1);
+        meta.setFrom(blogPage.getNumber() * blogPage.getSize() + 1);
+        meta.setLastPage(blogPage.getTotalPages());
+        meta.setPath("http://localhost:8080/api/v1/public" +"/blog");
+        meta.setPerPage(blogPage.getSize());
+        meta.setTo((int) blogPage.getTotalElements());
+        meta.setTotal((int) blogPage.getTotalElements());
+        response.setMeta(meta);
+
+        Links links = new Links();
+
+        links.setFirst("http://localhost:8080/api/v1/public" +"/blog?page=1");
+        links.setLast("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.getTotalPages());
+        if (blogPage.hasPrevious()) {
+            links.setPrev("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.previousPageable().getPageNumber());
+        }
+        if (blogPage.hasNext()) {
+            links.setNext("http://localhost:8080/api/v1/public" +"/blog?page=" + blogPage.nextPageable().getPageNumber());
+        }
+
+        response.setLinks(links);
+
+        return response;
+    }
+
+    @Override
+    public ContactUs storeContactUs(aminurdev.com.backend.domain.request.ContactUs contactUsRequest) {
+
+        try{
+
+            ContactUs contactUs = new ContactUs();
+
+            contactUs.setName(contactUsRequest.getName());
+            contactUs.setEmail(contactUsRequest.getEmail());
+            contactUs.setMessage(contactUsRequest.getMessage());
+
+            contactUsRepository.save(contactUs);
+
+            return contactUs;
+
+        }catch (Exception exception){
+
+            throw new CustomException("Error while creating contact us:" + exception.getMessage(), exception);
+        }
     }
 }

@@ -221,13 +221,13 @@ export default {
 
                 <h2 class="h2">Sub-Categories</h2>
 
-                <a href="#" class="topic-btn" v-for="subCategory in subCategories" :key="subCategory.id">
+                <router-link :to="`/sub-category-blog/${subCategory.id}`" class="topic-btn" v-for="subCategory in subCategories" :key="subCategory.id">
                   <div class="icon-box">
                     <ion-icon name="arrow-forward-outline"></ion-icon>
                   </div>
 
                   <p>{{ subCategory.name }}</p>
-                </a>
+                </router-link>
 
               </div>
 
@@ -236,7 +236,7 @@ export default {
                 <h2 class="h2">Tags</h2>
 
                 <div class="wrapper">
-                  <button class="hashtag" v-for="tag in tags" :key="tag.id">#{{tag.name}}</button>
+                  <router-link :to="`/tag-blog/${tag.id}`" class="hashtag" v-for="tag in tags" :key="tag.id">#{{tag.name}}</router-link>
                 </div>
 
               </div>

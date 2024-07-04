@@ -1,6 +1,50 @@
 <script>
+import {http} from "@/service/HttpService";
+
 export default {
-  name: "FrontContactUs"
+  name: "FrontContactUs",
+
+  data(){
+    return{
+      add_contact_us: {
+        name: '',
+        email: '',
+        message: ''
+      }
+    }
+  },
+
+  methods: {
+    addContactUs: async function(){
+      try {
+
+        let formData = new FormData();
+
+        formData.append('name', this.add_contact_us.name);
+        formData.append('email', this.add_contact_us.email);
+        formData.append('message', this.add_contact_us.message);
+
+        await http().post('http://localhost:8080/api/v1/public/contact-us', formData).then(res => {
+
+          if (res.data.status === 201)
+          {
+            this.$swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+            this.add_contact_us = {};
+          }
+        })
+      }catch (e) {
+        console.error(e);
+      }
+    }
+  }
 }
 </script>
 
@@ -12,21 +56,21 @@ export default {
 
         <p class="h3">Contact Me</p>
 
-        <form action="" class="form">
+        <form class="form" v-on:submit.prevent="addContactUs">
 
           <div class="input-wrapper">
             <label for="name">Name</label>
-            <input type="text" name="name" id="name" placeholder="Enter your name" required>
+            <input type="text" v-model="add_contact_us.name" name="name" id="name" placeholder="Enter your name" required>
           </div>
 
           <div class="input-wrapper">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" placeholder="Enter your email" required>
+            <input type="email" v-model="add_contact_us.email" name="email" id="email" placeholder="Enter your email" required>
           </div>
 
           <div class="input-wrapper">
             <label for="message">Message</label>
-            <textarea name="message" id="message" placeholder="Enter your message" required></textarea>
+            <textarea name="message" v-model="add_contact_us.message" id="message" placeholder="Enter your message" required></textarea>
           </div>
 
           <button type="submit" class="btn btn-primary">Send Message</button>
@@ -134,6 +178,7 @@ export default {
 .h3 {
   font-size: 24px;
   margin-bottom: 15px;
+  margin-top: 20px;
 }
 
 .divider {
@@ -195,6 +240,11 @@ export default {
   justify-content: center;
   border-radius: 50%;
   font-size: 24px;
+}
+
+.email{
+  margin-top: 10px;
+  margin-left: 20px;
 }
 
 .email-link {

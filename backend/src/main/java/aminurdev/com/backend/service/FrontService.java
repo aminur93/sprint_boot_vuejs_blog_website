@@ -18,9 +18,19 @@ public interface FrontService {
 
     List<SubCategory> getAllSubCategories();
 
+    SubCategory getSubCategory(Integer subCategoryId);
+
     List<Tag> getAllTags();
+
+    Tag getTag(Integer tagId);
 
     NewsLetter StoreNewsLetter(aminurdev.com.backend.domain.request.NewsLetter newsLetterRequest);
 
     PaginationResponse<Blog> getCategoryBlogs(Category category, Sort.Direction direction, int page, int perPage);
+
+    PaginationResponse<Blog> getSubCategoryBlogs(SubCategory subCategory, Sort.Direction direction, int page, int perPage);
+
+    PaginationResponse<Blog> getBlogsByTag(Tag tag, Sort.Direction direction, int page, int perPage);
+
+    ContactUs storeContactUs(aminurdev.com.backend.domain.request.ContactUs contactUsRequest);
 }
