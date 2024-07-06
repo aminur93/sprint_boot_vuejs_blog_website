@@ -1,6 +1,9 @@
 package aminurdev.com.backend.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -93,4 +96,10 @@ public class Blog {
         // Handle the case when name is empty or null
         return ""; // or throw an exception, depending on your requirements
     }
+
+    @OneToMany(mappedBy = "blog")
+    @JsonIncludeProperties({"id", "name", "email", "comment", "replys", "created_at", "updated_at"})
+    @JsonManagedReference
+    @JsonBackReference
+    private List<Comment> comments;
 }

@@ -6,12 +6,22 @@ export default {
 
   data(){
     return{
-      blog: {}
+      blog: {},
+      comments: [],
+
+      add_comment: {
+        name: '',
+        email: '',
+        comment: ''
+      },
+
+      add_reply: {}
     }
   },
 
   mounted() {
-    this.getSingleBlog( this.$route.params.id);
+    this.getSingleBlog(this.$route.params.id);
+    console.log(this.add_reply);
   },
 
   methods: {
@@ -22,6 +32,12 @@ export default {
         await http().get(`http://localhost:8080/api/v1/public/blog-details/${id}`).then(res => {
 
           this.blog = res.data.data;
+          this.comments = res.data.data.comments;
+
+          // Initialize add_reply for each comment
+          this.comments.forEach(comment => {
+            this.add_reply[comment.id] = { name: '', reply: '' };
+          });
         })
       }catch (e) {
         console.error(e);
@@ -39,6 +55,73 @@ export default {
       if (isNaN(dateObj.getTime())) return '';
       return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     },
+
+    addComment: async function(){
+      try {
+
+        let formData = new FormData();
+
+        formData.append('blog_id', this.blog.id);
+        formData.append('name', this.add_comment.name);
+        formData.append('email', this.add_comment.email);
+        formData.append('comment', this.add_comment.comment);
+
+        await http().post('http://localhost:8080/api/v1/public/comment', formData).then(res => {
+
+          if (res.data.status === 201)
+          {
+            this.$swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+            this.add_comment = {};
+
+            this.getSingleBlog(this.$route.params.id);
+          }
+        })
+      }catch (e) {
+        console.log(e);
+      }
+    },
+
+    AddReply: async function(comment_id){
+      try {
+
+        if (!this.add_reply[comment_id]) {
+          this.$set(this.add_reply, comment_id, { name: '', reply: '' });
+        }
+
+        let formData = new FormData();
+
+        formData.append('comment_id', comment_id);
+        formData.append('name', this.add_reply[comment_id].name);
+        formData.append('reply', this.add_reply[comment_id].reply);
+
+        await http().post('http://localhost:8080/api/v1/public/reply', formData).then(res => {
+
+          if (res.data.status === 201)
+          {
+            this.$swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: res.data.message,
+              showConfirmButton: false,
+              timer: 1500
+            });
+
+            this.getSingleBlog(this.$route.params.id);
+          }
+        })
+      }catch (e) {
+        console.log(e);
+      }
+    }
   }
 }
 </script>
@@ -101,49 +184,47 @@ export default {
             <div class="comments-section">
               <h3>Comments</h3>
 
-              <div class="comment-card">
+              <div class="comment-card" v-for="(comment,index) in comments" :key="index">
                 <div class="comment-author">
                   <img :src="require('@/assets/img/comment.png')" alt="John Doe">
-                  <p><strong>John Doe</strong></p>
+                  <p><strong>{{comment.name}}</strong></p>
                 </div>
                 <div class="comment-content">
-                  <p>This is a very informative blog. Thanks for sharing!</p>
-                </div>
-                <div class="reply-form">
-                  <textarea placeholder="Reply to this comment"></textarea>
-                  <button>Reply</button>
-                </div>
-              </div>
-
-              <div class="comment-card">
-                <div class="comment-author">
-                  <img :src="require('@/assets/img/comment.png')" alt="Jane Smith">
-                  <p><strong>Jane Smith</strong></p>
-                </div>
-                <div class="comment-content">
-                  <p>Great insights! Can you also cover some advanced topics in the future?</p>
+                  <p>{{ comment.comment }}</p>
                 </div>
 
-                <div class="reply-card">
-                  <div class="reply-author">
-                    <img :src="require('@/assets/img/comment.png')" alt="Julia Walker">
-                    <p><strong>Julia Walker</strong></p>
-                  </div>
-                  <div class="reply-content">
-                    <p>Thank you, Jane! Sure, I'll cover some advanced topics in upcoming blogs.</p>
-                  </div>
-                  <div class="reply-form">
-                    <textarea placeholder="Reply to this comment"></textarea>
-                    <button>Reply</button>
+                <div v-if="comment.replys.length > 0">
+                  <div class="reply-card" v-for="reply in comment.replys" :key="reply.id">
+                    <div class="reply-author">
+                      <img :src="require('@/assets/img/comment.png')" alt="Julia Walker">
+                      <p><strong>{{reply.name}}</strong></p>
+                    </div>
+                    <div class="reply-content">
+                      <p>{{reply.reply}}</p>
+                    </div>
+                    <div class="reply-form">
+                      <form v-on:submit.prevent="AddReply(comment.id)">
+                        <input type="text" v-model="add_reply[comment.id].name" placeholder="Name">
+                        <textarea v-model="add_reply[comment.id].reply" placeholder="Reply to this comment"></textarea>
+                        <button type="submit">Reply</button>
+                      </form>
+                    </div>
                   </div>
                 </div>
+
+<!--                <div class="reply-form" v-else>-->
+<!--                  <form v-on:submit.prevent="AddReply(comment.id)">-->
+<!--                    <input type="text" v-model="add_reply.name" name="" id="">-->
+<!--                    <textarea placeholder="Reply to this comment" v-model="add_reply.reply"></textarea>-->
+<!--                    <button type="submit">Reply</button>-->
+<!--                  </form>-->
+<!--                </div>-->
               </div>
 
               <div class="comment-form comment-card">
-                <form action="">
-                  <input type="text" name="name" placeholder="Your Name">
-                  <input type="email" name="email" placeholder="Your Email">
-                  <textarea name="comment" placeholder="Add a comment"></textarea>
+                <form v-on:submit.prevent="addComment">
+                  <input type="text" v-model="add_comment.name" name="name" placeholder="Your Name">
+                  <textarea name="comment" v-model="add_comment.comment" placeholder="Add a comment"></textarea>
                   <button type="submit">Submit</button>
                 </form>
               </div>
@@ -323,7 +404,7 @@ a{
   margin-top: 10px;
 }
 
-.comment-form textarea,
+.comment-form textarea, input[type="text"],
 .reply-form textarea {
   width: 100%;
   padding: 10px;
